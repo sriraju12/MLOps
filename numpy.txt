@@ -1,0 +1,625 @@
+Numpy - Numerical Python
+
+numpy stores only same data type .
+
+compare to list, numpy is fast, memory efficient and supports math operation(vectorized) and bulit-in functions.
+
+creating arrays in numpy:
+1. creating array from list.
+
+   import numpy as np
+
+   arr1 = np.array([1,2,3])
+
+here it will convert into array
+
+2. creating zeros
+
+z1 = np.zeros((3,3)) here it will create a 3x3 dimension matrix of zeros. first 3 means rows and next 3 means columns.
+
+here it will generate the values in float. if you want to int values then you need to type cast it.
+
+z1 = np.zeros((3,3)).astype(int)
+
+similarly you can do for all in the below
+
+3. creating ones
+
+o1 = np.ones((2,2)) here it will create 2x2 dimension matrix of ones. first 2 means rows and next 2 means columns
+
+4. creating arange
+
+a1 = np.arange(10) here it will output 0 to 9 numbers in a array
+
+5. creating linspace
+
+l1 = np.linspace(0,1,5) here 0, 1 means 0 to 1 and 5 means from 0 to 1 divide 5 parts
+
+6. creating eye
+
+e = np.eye(4) it will create diagonal 1 in the matrix
+
+7. creating random
+
+ran1 = np.random.rand(2,3) here in the 2x3 matrix, it will generate the random values in 2x3 matrix between 0 to 1 only - random float values between 0 to 1
+
+if you want to print 1 to 100 random values in a 3x3 then use like this
+
+ran2 = np.random.randint(1,100, size(3,3)) here it will generate random values in 3x3 matrix between 1 to 100
+
+8. empty array - uninitialize array 
+
+arr = np.empty
+
+
+Array attributes:
+
+1. shape - it represents the dimension. so basically it print how many rows and cloumns
+
+let's take 3 dimensional array.
+
+import numpy as np
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+result = arr1.shape
+
+it will output the dimension like 3x3
+
+2. size - it will give the count of elements in the array.
+
+let's take 3 dimensional array.
+
+import numpy as np
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+result = arr1.size
+
+it will display the output as 9
+
+3. ndim - Number of dimensions like 1,2 3 etc
+
+4. dtype - Returns the data type of the array elements
+
+
+Type casting:
+
+converting data type are one to another manually is called types castings
+
+this can be done using astype()
+
+import numpy as np
+
+arr = np.array(1,2,3,4,5).astype(int)
+print(arr) # it will print int values. by default array outputs float values.
+
+NOTE:
+type casting throws error when you try to convert into incompatable types for examples convert from strings to int.
+
+
+indexing and slicing:
+
+indexing basically retrieving single element from the array.
+
+import numpy as np
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+idx = arr1[0][1] -> it will retrieve value 2 because 0 means first array and 1 means in 1st array we need to retrieve 1st position value
+
+
+slicing:
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+slice1 = arr1[1:,1] here 1 means [4,5,6] and second 1 means in that list 1st position value that is 5. so it will print 5,6 and 8,9
+
+basically this will print sub-array
+
+* if you want to print only columns then use this,
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+slice1 = arr1[:,1] so it will print 2,5,8 because that is the 2nd column values
+
+
+* if you want to print only rows then use this,
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+slice1 = arr1[2,:] # it will print 4,5,6 because that is the 2nd row
+
+
+* take() is used to select elements from an array using index positions. Basically it retrieves index position values.
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6,7,8])
+
+idxs = [2,3,6]
+
+print(np.take(arr, idxs)) # output: [3 4 7]
+
+
+Iterating through array:
+printing the values one by one
+
+using np.nditer() -> used to iterate through array elements
+
+import numpy as np
+
+arr = np.array([[1,2,3], [4,5,6]])
+
+for x in np.nditer(arr):
+  print(x)
+
+
+using np.ndenumerate() -> gives index + value position
+
+import numpy as np
+
+arr = np.array([[1,2,3],[4,5,6]])
+
+for idx, val in np.ndenumerate(arr):
+    print(idx,":",val)
+    
+
+
+Mathematical Operations:
+
+import numpy as np
+
+a = np.array([1,2,3])
+b = np.array([4,5,6])
+
+add = a + b => it will add the values based on the index position like 0 index position will be added i.e here 0 index position are 1, 4 and 1+ 4 = 5
+
+# output = [5, 7,9]
+
+similarly we can do for sub, multi, square etc
+
+sub = a - b
+
+multi = a * b
+
+square = a ** 2
+
+sqaureroot = np.sqrt(a)
+
+sum = np.sum(a) # it will print sum of a
+
+
+Aggregation Functions:
+
+1. min() - minimum value in the array
+
+import numpy as np
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+mins = np.min(arr1) # oputput: 1
+
+similarly we can perform matrix operations using aggregation using axis. like you want to calulate for rows or columns then we can use axis. 
+
+axis 0 -> rows
+
+axis 1 -> columns
+
+import numpy as np
+
+arr = np.array([[1,2,3],[4,5,6]])
+
+sum_arr = np.min(arr, axis=0)
+
+print(sum_arr)
+
+2. max() - maximum value in the array
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+maxs = np.max(arr1) # oputput: 9
+
+3. mean() - avg of all elements or values in the array
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+means = np.mean(arr1) # oputput: 5
+
+4. median() - middle values in the array. if two values are present then it will give the avg of the two values
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+medians = np.median(arr1) # oputput: 5
+
+5. std() - 
+
+6. axis which can be used in aggregation functions
+
+arr1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+
+sum1 = np.sum(arr1, axis=0) # prints sum of column wise
+
+sum2 = np.sum(arr1, axis=1) # prints sum of row wise
+
+
+axis = 0 -> means cloumn wise
+
+axis = 1 -> means row wise
+
+
+Broadcasting:
+
+Broadcasting is the process of automatically expanding arrays with compatible shapes to perform element-wise operations in NumPy.
+
+import numpy as np
+
+arr = np.array([1,2,3])
+
+result = arr + 10 # output: [11, 12, 13]
+
+
+reshape:
+
+it is used to change the shape (dimensions) of an array without changing its data.
+
+import numpy as np
+
+arr = np.array([1, 2, 3, 4, 5, 6])
+
+new_arr = arr.reshape(2,3)
+
+# output: [[1 2 3]
+           [4 5 6]]
+
+NOTE: Reshaping is only possible when the total number of elements in the original array equals the total number of elements required by the new shape. if the number of elements differs then it will throw an error
+
+
+flatten:
+
+flatten() converts a multidimensional array into a one-dimensional (1D) array.
+
+import numpy as np
+
+arr = np.array([[1, 2, 3],[4, 5, 6]])
+
+print(arr.flatten()) # output: [1 2 3 4 5 6]
+
+
+ravel:
+
+it converts the multidimensional array into 1-D array without copying of data.
+
+import numpy as np
+
+arr = np.array([[1,2,3],[4,5,6]])
+
+ravel_arr = np.ravel(arr)
+print(ravel_arr) # output: [1,2,3,4,5,6]
+
+NOTE:
+
+The main difference between ravel() and flatten() are both converts multidimensional array into 1 D array but ravel() return the view (means a view is like another way to look at the same original data without creating of copy. here if you try to modify the view then original array also be modified).
+
+flatten() creates a copy and if you try to modify the value, the original array will unchanged.
+
+
+if you want to create view and copy, you can create like this:
+
+import numpy as np
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+view1 = arr[0:3]
+
+copy1 = arr.copy()
+
+view1[0] = 100
+
+print(view1)
+print(arr)
+
+copy1[0] = 200
+
+print(copy1)
+print(arr)
+
+
+combining:
+
+combine means concatinating of two arrays into one array
+
+import numpy as np
+
+a = np.array([1,2,3])
+b = np.array([4,5,6])
+
+result = np.concatenate(a,b) # output: [1,2,3,4,5,6]
+
+
+vstack:
+
+vstack() joins arrays vertically (row-wise).
+
+a = np.array([1,2,3])
+b = np.array([4,5,6])
+
+print(np.vstack((a,b)))
+
+output:
+
+[[1 2 3]
+ [4 5 6]]
+
+
+hstack:
+
+hstack() joins arrays horizontally (column-wise).
+
+import numpy as np
+
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+result = np.hstack((a, b))
+
+print(result) # output: [1 2 3 4 5 6]
+
+NOTE: hstack -> Horizontal -> Side by Side -> Columns increase
+      vstack -> Vertical -> One Below Another -> Rows increase
+
+
+spitting:
+
+split() divides an array into multiple subarrays.
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+result = np.split(arr, 3)
+
+print(result)
+
+# output:
+
+[array([1, 2]),
+ array([3, 4]),
+ array([5, 6])]
+
+
+sorting:
+
+sort the elements in ascending order
+
+import numpy as np
+
+arr = np.array([1,4,2,5,3,9,7])
+
+result = np.sort(arr) # output: [1,2,3,4,5,7,9]
+
+
+Boolean Masking and Filtering:
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+filtered = arr[arr > 4] # output: [5,6]
+
+
+unique:
+
+to print unique elements
+
+import numpy as np
+
+arr = np.array([1,2,2,4,1,6])
+
+filtered = np.unique(arr) # output: [1,2,4,6]
+
+
+NOTE:
+
+when you print the values in the above all, it will be displaying in array format. if you want to see in list format then use tolist().
+
+import numpy as np
+
+arr = np.array([1,2,2,4,1,6])
+
+filtered = np.unique(arr) # output: [1,2,4,6]
+
+filtered.tolist()
+
+
+
+transpose() - it is used to swap rows and columns of an array
+
+import numpy as np
+
+arr = np.array([[1,2,3],[4,5,6]])
+
+print(np.transpose(arr))
+
+
+* repeat() - repeat each element a specified number of times
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+print(np.repeat(arr, 2)) # output:[1 1 2 2 3 3 4 4 5 5 6 6]
+
+* tile() - it is used to repeat entire array with specified number of times
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+print(np.tile(arr, 2)) # output:[1 2 3 4 5 6 1 2 3 4 5 6] 
+
+
+conditional based operations:
+
+performing operations based on whether the elements statisfy a condition or not.
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+print(arr > 2) # output: [False False  True  True  True  True]
+
+result = np.where(arr > 2, "greater","lesser")
+print(result) #output: ['lesser' 'lesser' 'greater' 'greater' 'greater' 'greater']
+
+
+* np.argwhere() -> Returns the index position where condition is true.
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+result = np.argwhere(arr > 4)
+
+print(result)
+
+output: [[4]
+         [5]]
+
+NOTE:
+if we are using the matrix then it will return the position like [row,col] i.e [2,0]
+
+* np.logical_and() ->  check whether both conditions are true for each element.
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+result = np.logical_and(arr > 2, arr < 5)
+
+print(result) # output: [False False  True  True False False]
+
+print(arr[result]) # output: [3 4]
+
+* logical_or() -> check whether at least one condition is true for each element
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+result = np.logical_or(arr > 2, arr > 5)
+
+print(result) # output: [False False  True  True  True  True]
+
+print(arr[result]) # output: [3 4 5 6]
+
+* boolean mask - it is an array of true/false values used to filter element.
+
+import numpy as np
+
+arr = np.array([1,2,3,4,5,6])
+
+result = arr > 2
+
+print(result) # output: [False False  True  True  True  True]
+print(arr[result]) # output [3 4 5 6] => this is boolean masking
+
+
+* np.nonzero() -> it is used to get the positions where array values are non-zero
+
+import numpy as np
+
+arr = np.array([0,1,2,3,4,5,6])
+
+result = np.nonzero(arr)
+
+print(result)
+
+
+
+Vectorization - vectorization means performing operations on an entire array at once instead of using a for loop.
+
+import numpy as np
+
+arr = np.array([1,2,3])
+result = arr * 2
+print(result) #output: [2,4,6]
+
+instead of:
+
+for i in range(len(arr)):
+   a[i] = a[i] * 2
+
+and vectorize() -> it is used to a apply a normal python function to each element in an array.
+
+when to use -  if you want to use custom function to each element in an array
+
+import numpy as np
+
+def sqaure(x):
+    return x * x
+
+vector = np.vectorize(sqaure)
+
+arr = np.array([1,2,3,4])
+
+result = vector(arr)
+
+print(result) # output: [ 1  4  9 16]
+
+
+Dealing with missing values:
+
+Dealing with missing values means identifying and handling values such as NAN(not a number)
+
+np.nan -> not a number or missing value
+
+np.inf -> represents postive infinite 
+
+-np.inf -> represents negative infinite 
+
+np.isnan -> checks for nan
+
+np.isinf -> checks for postive infinity
+
+np.isneginf -> checks for negative infinity
+
+isfinite -> checks for nan and inf, neginf values
+
+import numpy as np
+
+arr = np.array([1,2,3,4, np.nan])
+
+result = np.isnan(arr)
+
+print(result) #output: [False False False False  True]
+
+
+* np.nan_to_num() -> used to replace nan values (missing values)
+
+import numpy as np
+
+arr = np.array([1,2,3,4, np.nan])
+
+result = np.nan_to_num(arr, nan=0)
+
+print(result)
+
+* np.isfinite() - check for nan, inf and neginf values
+
+import numpy as np
+
+arr = np.array([1,2,3,4, np.nan, np.inf])
+
+result = np.isfinite(arr)
+
+print(result) # output: [ True  True  True  True False False]
+
+
+
+
+
+
+
+

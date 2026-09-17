@@ -1,0 +1,225 @@
+Matplotlib - it is used to data visualization in python. it is used to create charts and graphs
+
+
+univariate - analyzing only one variable (one column) at a time
+
+
+Plot - it is used to create line plot.
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+data = {
+    "salary" : [20000, 10000, 15000, 45000, 1000000]
+}
+
+df = pd.DataFrame(data)
+
+plt.plot(df['salary'], color = 'red', marker = 'o', linestyle = '--', linewidth = "2")
+plt.grid()
+plt.show()
+
+# here, marker - where ever the data is present, it will keep one 'o'
+        color - color of the line
+        linestyle - it will display the line as '--' in the graph
+        grid - it will show boxes in the graph
+
+
+Histogram - Histogram is used to show the distribution of numerical data.
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+data = {
+    "salary" : [1000, 20000, 30000, 45000, 50000]
+}
+
+df = pd.DataFrame(data)
+
+plt.hist(df['salary'], bins=5)
+plt.show()
+
+
+BoxPlot - it is used to understand the distribution of numerical data especially the median, spread and outliers.
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+data = {
+    "salary" : [1000, 20000, 30000, 45000, 50000]
+}
+
+df = pd.DataFrame(data)
+
+plt.boxplot(df['salary'])
+plt.show()
+
+
+NOTE: Boxplot and Histogram are used for univariate analysis only because they analyze one numerical 
+      variable at a time.
+
+
+Pie chart - it is used to show how a total is divided among the categories.
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+data = {
+    "salary" : [1000, 20000, 30000, 45000, 50000],
+    "Department" : ["HR", "IT", "Admin", "HR", "IT"]
+}
+
+df = pd.DataFrame(data)
+
+count = df['Department'].value_counts()
+
+plt.pie(count, labels = count.index, autopct = "%1.1f", explode =[0, 0.1, 0.2])
+plt.axis("equal")
+plt.show()
+
+# here labels - gives the names
+       autopct - display the percentage 
+       explode - breaks the pie chart like pizza slices
+       plt.axis("equal") - this makes the circle equally after explode.
+
+  
+Bar - it creates a bar chart. it is used to compare numberical values across different categories
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+data = {
+    "salary" : [1000, 20000, 30000, 45000, 50000],
+    "Department" : ["HR", "IT", "Admin", "HR", "IT"]
+}
+
+df = pd.DataFrame(data)
+
+count = df['Department'].value_counts()
+
+plt.bar(count.index, count)
+plt.axis("equal")
+plt.show()
+
+
+
+
+Bivariant - analyzing 2 variables at a time
+
+scatter - it is used to show the relationship between two numerical variables
+
+import matplotlib.pyplot as plt
+import pandas as pd
+
+data = {
+    "Salary" : [1000, 20000, 30000, 45000, 50000],
+    "Department" : ["HR", "IT", "Admin", "HR", "IT"],
+    "Age" : [20,22,24,30,35]
+}
+
+df = pd.DataFrame(data)
+
+plt.scatter(df['Salary'], df['Age'], color = 'red')
+plt.show()
+
+NOTE:
+
+we can create the line, bar charts in Bivariant also.
+
+
+
+labels:
+
+we can set the title for the chart -> plt.title()
+
+plt.scatter(df['Salary'], df['Age'], color = 'red')
+plt.title("Raju")
+plt.xlabel("x-axis")
+plt.ylabel("y-axis")
+plt.show()
+
+
+legend() - it is used to show the labels of different plots/lines so you can identify what each line 
+           represents.
+
+
+            import matplotlib.pyplot as plt
+            import pandas as pd
+
+
+            plt.plot([1,2,3], [10,20,30], label = "sales")
+            plt.plot([1,2,3], [5,15,25], label = "profit")
+
+            plt.legend() # on top-left it will display sales in one color and profit in another 
+                            color for identification
+            plt.show()
+
+            # we can control the position of the legend() by passing loc like this
+
+              plt.legend(loc = "upper right") 
+
+              supported values: upper left, upper right, lower left, lower right, center
+
+
+
+subplot() - it is used to create multiple plots inside one figure.
+
+syntax - subplot(rows, columns, position)
+
+mport matplotlib.pyplot as plt
+
+plt.subplot(1,2,1)
+plt.plot([1,2,3], [10,20,30])
+
+plt.subplot(1,2,2)
+plt.plot([1,2,3], [15,25,35])
+
+plt.title("my graph")
+plt.xlabel('rows')
+plt.ylabel('columns')
+plt.show()
+
+
+tight_layout() - it automatically fixes spacing between subplots and labels. basically it avoids
+                 the overlap.
+
+                 plt.tight_layout()
+
+
+savefig() - it is used to save your plot / graph as an image file or pdf or jpg instead of only 
+            displaying it on the screen
+
+            import matplotlib.pyplot as plt 
+
+            plt.plot([1,2,3], [10,20,30])
+            plt.savefig("myplot.png")
+            plt.show()
+
+
+NOTE:
+
+you can set the x-axis and y-axis limit using this
+
+x-axis => plt.xlim(0,10)
+y-axis => plt.ylim(1,20)
+
+
+xticks() - it is used to set or customize the tick marks and labels on x-axis
+
+yticks() - it is used to set or customize the tick marks and labels on y-axis
+
+import matplotlib.pyplot as plt
+
+x = [1, 2, 3, 4]
+y = [10, 20, 30, 40]
+
+plt.plot(x,y)
+
+plt.xticks([1, 2, 3, 4], ["Jan", "Feb", "Mar", "April"]) # in x-axis it will show jan, feb, mar, april
+plt.yticks([10, 20, 30, 40], ["10k", "20k", "30k", "40k"]) # in y-axis it will show 10k, 20k, 30k, 40k
+
+plt.title("Learning x,y ticks")
+plt.xlabel("months")
+plt.ylabel("amount")
+
+plt.show()

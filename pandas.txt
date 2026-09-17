@@ -1,0 +1,854 @@
+Pandas - it is library in python used for data analysis / data cleaning. you can think like Excel in 
+         python.
+
+
+pandas provides features like:
+
+data frames - excel like tables in python
+bulit on numpy - for fast operations
+CSV / Excel / JSON read - one line code for data load
+filtering / grouping - SQL like operations
+plotting - direct chart operations
+
+
+Two main data structures:
+
+1. series - 1D(single column) : excel column
+2. data frame - 2D(rows x columns) : excel sheet
+
+
+pandas series - a pandas series is a one dimensional labeled array.
+
+They are 3 types of creating a series:
+
+* from list
+
+import pandas as pd
+
+data = [1,2,3,4,5,6]
+
+result = pd.Series(data)
+print(result)
+
+# output:
+
+0    1
+1    2
+2    3
+3    4
+4    5
+5    6
+dtype: int64
+
+* from list using custom index(labels) - by default list uses index from 0 to n and if you want those index to be your own defined values then we need to use like this.
+
+import pandas as pd
+
+prices = [100, 200, 300, 400, 500]
+
+products = ["T-shirt", "Shirt", "jeans", "Short", "Cap"]
+
+result = pd.Series(prices, index=products)
+
+print(result)
+
+print("T-shirt:", result["T-shirt"]) # retrieve individual values
+
+# output:
+
+T-shirt    100
+Shirt      200
+jeans      300
+Short      400
+Cap        500
+dtype: int64
+
+T-shirt: 100
+
+* using dictionary ( keys becomes indexes)
+
+city_population = {
+    "Mumbai" : 20.4,
+    "Hyderabad" : 18,
+    "Bengaluru" : 24,
+    "Chennai" : 20
+}
+
+result = pd.Series(city_population)
+
+print(result)
+
+print("Mumbai Population:", result["Mumbai"]) # retrieve individual values
+
+# output
+
+Mumbai       20.4
+Hyderabad    18.0
+Bengaluru    24.0
+Chennai      20.0
+dtype: float64
+
+Mumbai Population: 20.4
+
+
+
+Pandas Data frame - a data frame is a 2-D labeled data structure in pandas
+
+data frame = a table with rows and columns similar to excel sheet.
+
+They are 3 ways to create data frames.
+
+* from dictionary of list (most commonly used)
+
+import pandas as pd
+
+data = {
+    "Name" : ["Raju", "Sandhya", "Swaroop", "Somu"],
+    "Age" : [27, 26,  26, 26],
+    "City": ["Anantapur", "Nellore", "Nellore", "Kalahasti"],
+    "Salary_LPA": [10, 30.5, 6, 8]
+}
+
+result = pd.DataFrame(data)
+
+print(result)
+
+print("Names:", data["Name"]) # retrieve individual values
+
+# ouput:
+
+      Name  Age       City  Salary_LPA
+0     Raju   27  Anantapur        10.0
+1  Sandhya   26    Nellore        30.5
+2  Swaroop   26    Nellore         6.0
+3     Somu   26  Kalahasti         8.0
+
+Names: ['Raju', 'Sandhya', 'Swaroop', 'Somu']
+
+* from list of dictionaries
+
+import pandas as pd
+
+
+data = [
+    {"Name" : "Raju", "Age" : 27, "City" : "Anantapur", "Salary_LPA" : 10 },
+    {"Name" : "Sandhya", "Age" : 26, "City" : "Nellore", "Salary_LPA" : 30.5 },
+    {"Name" : "Swaroop", "Age" : 26, "City" : "Nellore", "Salary_LPA" : 6 },
+    {"Name" : "Somu", "Age" : 26, "City" : "Kalahasti", "Salary_LPA" : 8 },
+]
+
+result = pd.DataFrame(data)
+
+print(result)
+
+print("Names:", data[0]["Name"]) # retrieve individual values
+
+# output:
+
+      Name  Age       City  Salary_LPA
+0     Raju   27  Anantapur        10.0
+1  Sandhya   26    Nellore        30.5
+2  Swaroop   26    Nellore         6.0
+3     Somu   26  Kalahasti         8.0
+
+Names: Raju
+
+
+* with custom indexes(labels)
+
+import pandas as pd
+
+
+data = [
+    {"Name" : "Raju", "Age" : 27, "City" : "Anantapur", "Salary_LPA" : 10 },
+    {"Name" : "Sandhya", "Age" : 26, "City" : "Nellore", "Salary_LPA" : 30.5 },
+    {"Name" : "Swaroop", "Age" : 26, "City" : "Nellore", "Salary_LPA" : 6 },
+    {"Name" : "Somu", "Age" : 26, "City" : "Kalahasti", "Salary_LPA" : 8 },
+]
+
+idxs = ["p1", "p2", "p3", "p4"]
+
+result = pd.DataFrame(data, index=idxs)
+
+print(result)
+
+print("Names:", data[0]["Name"]) # retrieve individual values
+
+# output:
+
+       Name  Age       City  Salary_LPA
+p1     Raju   27  Anantapur        10.0
+p2  Sandhya   26    Nellore        30.5
+p3  Swaroop   26    Nellore         6.0
+p4     Somu   26  Kalahasti         8.0
+
+Names: Raju
+
+NOTE:
+while working with custom indexes, index length should match with data length. if differs then it will
+throws an error.
+
+
+
+** Reading CSV files **
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print(read_csv_data)
+
+# output:
+
+    Employee_ID          Name   Department  ...  Performance_Score Remote_Work  Projects_Completed
+0      EMP-1001    Employee_1  Engineering  ...                5.0       False                  16
+1      EMP-1002    Employee_2      Finance  ...                5.0       False                  10
+2      EMP-1003    Employee_3    Marketing  ...                2.0       False                  10
+3      EMP-1004    Employee_4  Engineering  ...                3.0       False                  12
+4      EMP-1005    Employee_5        Sales  ...                3.0       False                   9
+
+
+NOTE:
+if you want to read excel file then you need call this method => pd.read_excel("Path_of_excel")
+
+* if you want first 5 lines data then you need to use head():
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print(read_csv_data.head()) 
+
+if you want first n lines of data then you can use like this: head(10) # it will print first 10 lines of data.
+
+* if you want last 5 lines data then you need to use tail():
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print(read_csv_data.tail(10)) # it will print last 10 lines of data
+
+
+you can check the shape and size of the data:
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print(read_csv_data.shape) # output: (250, 10) => rows x columns
+
+print(len(read_csv_data)) # output: 250
+
+
+* info() - it gives the overview of the data frame. it helps in finding the missing values.
+
+info contains number of rows,columns and no. of non-null values, data types of each column and memory usage.
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print(read_csv_data.info())
+
+# output:
+
+<class 'pandas.DataFrame'>
+RangeIndex: 250 entries, 0 to 249
+Data columns (total 10 columns):
+ #   Column              Non-Null Count  Dtype  
+---  ------              --------------  -----  
+ 0   Employee_ID         250 non-null    str    
+ 1   Name                250 non-null    str    
+ 2   Department          250 non-null    str    
+ 3   Age                 250 non-null    int64  
+ 4   Gender              250 non-null    str    
+ 5   Salary              238 non-null    float64
+ 6   Join_Date           250 non-null    str    
+ 7   Performance_Score   240 non-null    float64
+ 8   Remote_Work         250 non-null    bool   
+ 9   Projects_Completed  250 non-null    int64  
+dtypes: bool(1), float64(2), int64(2), str(5)
+memory usage: 18.0 KB
+None
+
+
+* describe() - it gives the statistical overview / summary of numerical columns in a data frame.
+
+for example, if the data is about sales then by using this we can get avg sales count values.
+
+describe contains count of each column(no.of values in that column), mean, std, min, max.
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print(read_csv_data.describe())
+
+# output:
+
+             Age         Salary  Performance_Score  Projects_Completed
+count  250.00000     238.000000         240.000000          250.000000
+mean    41.23600   93064.193277           3.175000           12.380000
+std     10.90578   27224.086011           1.024082            6.714158
+min     22.00000   45077.000000           1.000000            1.000000
+25%     33.00000   69230.500000           3.000000            7.000000
+50%     43.00000   93536.000000           3.000000           12.000000
+75%     50.00000  117049.500000           4.000000           18.000000
+max     59.00000  139270.000000           5.000000           24.000000
+
+* dtypes - data types of each column
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print(read_csv_data.dtypes)
+
+# output:
+
+Employee_ID               str
+Name                      str
+Department                str
+Age                     int64
+Gender                    str
+Salary                float64
+Join_Date                 str
+Performance_Score     float64
+Remote_Work              bool
+Projects_Completed      int64
+dtype: object
+
+
+* some useful methods in data frames
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+print("column names: ",list(read_csv_data.columns)) # it will print the colum names
+
+print("index range: ", read_csv_data.index) # get the index range i.e start and end val
+
+print("size of the data: ", read_csv_data.size) # total count of elements or val
+
+print("memory usage: ", read_csv_data.memory_usage().sum()) # sum of memory usage
+
+
+# output:
+
+column names:  ['Employee_ID', 'Name', 'Department', 'Age', 'Gender', 'Salary', 'Join_Date', 'Performance_Score', 'Remote_Work', 'Projects_Completed']
+
+index range:  RangeIndex(start=0, stop=250, step=1)
+
+size of the data:  2500
+
+memory usage:  18382
+
+
+# Accessing particular data in data frame:
+if you want to access particular value in row or column in data frame data. 
+
+They are 4 ways to access data in data frame
+
+to get column name -> read_csv_data['column_name'] # here we can pass multiple column_names using ,
+
+we can also apply condition inside column names -> read_csv_data[read_csv_data['Age'] > 20]
+
+to get single row / cell -> read_csv_data.loc[0]  => basically retrieve by names
+
+using row / cell by integer position -> read_csv_data.iloc[0] => basically retrieve by indexes
+
+if you want to retrieve 2nd index position data from column name(single value) -> read_csv_data.at[2,"column_name"]
+
+single cell by integer postion i.e to get 2nd row index and 2nd cloumn index val -> read_csv_data.iat[2,2]
+
+
+*** loc[rows, cloums] *** syntax for filtering the data i.e loc[1:2, 1:3] => filter using names
+
+*** iloc[rows, cloums] *** syntax for filtering the data using index i.e iloc[1:3, 1:4] => filter using index. whenever using iloc, remember end is excluded. 
+
+NOTE:
+
+in loc, we can pass the conditions also.
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+result = read_csv_data.loc[read_csv_data['Age'] > 30] # like this we can pass conditions
+
+print(result)
+
+here it will print all the columns instead of that we can select specific columns also.
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+result = read_csv_data.loc[read_csv_data['Age'] > 30, ['Name', 'Age', 'Join_Date']]
+
+print(result)
+
+* we can also use and conditions for multiple condition
+
+  result = read_csv_data.loc[(read_csv_data['Age'] > 30) & (read_csv_data['Gender'] == 'Male'), ['Name', 'Age', 'Join_Date']]
+
+* or condition
+
+  result = read_csv_data.loc[(read_csv_data['Age'] > 30) | (read_csv_data['Gender'] == 'Male'), ['Name', 'Age', 'Join_Date']]
+
+
+slicing:
+
+if you want to print particular colums and rows use slice like i need first 3 rows.
+
+for rows: 
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+result = read_csv_data.loc[1:3] # it will print 1,2,3 rows data only. it includes the end position val
+
+print(result)
+
+NOTE:
+
+if you use iloc instead of loc then it will print 1,2 rows only because it exclude the last position val.
+
+
+use iloc[row_slice:, column_slice]
+
+result = read_csv_data.iloc[1:4, 1:5] # it will print first 3 rows and first 4 column
+
+
+for columns:
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+result = read_csv_data.iloc[:, 1:5] # it will print all rows but it will show only first 4 columns only
+
+print(result)
+
+NOTE: 
+if you set the index values manually then inorder to reset it, you need to use reset()
+
+read_csv_data.reset_index() -> reset index
+
+read_csv_data.set_index('you can give anything') -> set index
+
+Data Manipulation - add columns, drop columns, update values.
+
+
+* adding a new column - adding a new column to the existing dataset.
+
+They are 3 ways to add a new column
+
+  1. direct assignment using list - add all the values in a list.
+     
+     import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+    read_csv_data['Location'] = ["Bengalure", "Chennai", "Hyderabad", "Pune", "Guragaon", "Delhi", "UP"]
+
+    print(read_csv_data)
+
+
+  2. calculate from existing data - for example there is salary column is there that is monthly and 
+                                    you need annual salary
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+    read_csv_data["Annual_salary"] = read_csv_data["Salary"] * 12
+
+    print(read_csv_data)   
+
+
+  3. conditional assignment - changing / assigning values in a data frame based on a condition
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset.csv')
+
+    read_csv_data["Category"] = ['Senior' if x > 30 else 'Junior' for x in read_csv_data["Age"]]
+
+    print(read_csv_data)    
+
+
+
+* Dropping of columns - Removing the columns in a data frame
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+read_csv_data.drop('Projects_Completed', axis=1, inplace=True) # column_name, axis = 1 means cloumn
+
+print(read_csv_data.columns)
+
+NOTE:
+if ypu want to drop multiple columns you need to use like this:
+
+df = df.drop(columns=['umpire1', 'umpire2'])
+
+or 
+
+df = df.drop(['umpire1', 'umpire2'], axis=1)
+
+you can not use cloumns and axis both => df = df.drop(['umpire1','umpire2'], axis=1)
+
+* Rename Columns - renaming the column name
+
+  import pandas as pd
+
+  read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+  read_csv_data.rename(columns={"Age" : "AGE"}, inplace=True)
+
+  print(read_csv_data)
+
+  * we can rename by passing the updated whole columns in a list.
+
+    read_csv_data.cloumns = [pass whole column names with updated values]
+
+
+* Dropping a row by index value - Removing the row data using index
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+print(read_csv_data.size) # before 
+
+read_csv_data.drop(0, inplace=True)
+
+print(read_csv_data.size) # after
+
+# output: 2500
+          2490
+
+
+* update the data values 
+
+import pandas as pd
+
+read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+print(read_csv_data['Age']) # before 
+
+read_csv_data['Age'] = read_csv_data['Age'] + 1
+
+print(read_csv_data['Age']) # after
+
+
+
+Data Cleaning - data cleaning means finding and fixing incorrect, missing and duplicate data before 
+                using it.
+
+
+  * Handling null values: finding null values and replaces or remove with value.
+
+   checking null values:
+
+   import pandas as pd
+
+   read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+   result = read_csv_data.isnull().sum()
+
+   print(result) # prints the number of null values in column based 
+
+   output:
+
+    Employee_ID            0
+    Name                   0
+    Department             0
+    Age                    0
+    Gender                 0
+    Salary                12
+    Join_Date              0
+    Performance_Score     10
+    Remote_Work            0
+    Projects_Completed     0
+    dtype: int64
+
+
+   Dropping null values:
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = read_csv_data.dropna() # it will drop all the rows containing null values
+
+    print(result) 
+
+    NOTE: use result = read_csv_data.dropna(subset=['Age']) # drop null values on specific column or you can pass list of column names also.
+
+
+    Adding value for null values:
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = read_csv_data.fillna(0) # it will add zero to all the rows containing null values
+
+    print(result) 
+
+
+  * Type conversion - changing one data type to another. we need to use astype() for type conversion
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    new_result = read_csv_data["Age"].astype('float')
+
+    result = new_result.info()
+
+    print(result)   
+
+
+  * Duplicate rows - if the dataset contains duplicate rows then we need remove / drop it.
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = read_csv_data.drop_duplicates() # it will automatically drop all duplicate rows
+
+    print(result) 
+
+    # fetch the duplicate rows
+
+      import pandas as pd
+
+      read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+      result = read_csv_data[read_csv_data.duplicated()]
+
+      print(result) 
+
+  * Fix inconsistent data - may be converting to uppercase letters etc
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    read_csv_data['Gender'] = read_csv_data['Gender'].replace({"Male" : "MALE"}) # here replace can be used to update the existing values also.
+
+    print(read_csv_data) 
+
+    or
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    read_csv_data['Gender'] = read_csv_data['Gender'].str.upper()
+
+    print(read_csv_data) 
+
+    NOTE:
+
+    inorder to perform string operation then you need to use .str then only we can access string bulit
+    in functions.
+
+
+  * Dealing with invalid values - means if a column is gender then allowed values will be male, female 
+                                  and others. if the values is something like xyz then it is invalid values.
+
+     * first we need to identify the invalid values
+     * then we need to convert to 'nan'
+     * and then we need to handle this with dropna() or fillna()
+
+
+
+
+Data transformation and analysis:
+
+Data transformation means changing the data into a format that is easier or suitable for analysis.
+
+  * Sorting - sorting the columns data either ascending or descending order
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = read_csv_data.sort_values(by = 'Age', ascending=True) # if you give false then it will sort in descending order
+
+    print(result) 
+
+    * there is a sort_index() also there for sorting the rows. by default it is sorted in index because
+      index values starts from 0.
+
+      if you want to sort in descending order then you need use like this,
+
+      import pandas as pd
+
+      read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+      result = read_csv_data.sort_index(ascending=False)
+
+      print(result)
+
+
+    NOTE:
+    if you want, you can sort the multiple columns but ideal way for sorting is using one columns only
+    here instead of single column name, you need to pass list of column names.
+
+    result = read_csv_data.sort_values(by = ['Age', Department], ascending=True)
+
+    * you have taken two columns to sort and we can sort one column in ascending order and other in 
+      descending order. for that again we need to pass list instead of single value.
+
+       result = read_csv_data.sort_values(by = ['Age', Department], ascending=[True, False])
+
+
+    * if you are using the sort by column, then if two values are tie then we can pass another columns
+      name to sort based their order. here 2nd columns higher values comes first.
+
+      result = read_csv_data.sort_values(by = ['Age', Department], ascending=[False,False])
+
+
+
+
+  * value_counts() - which is used to count values for that particular column. for example in a dataset
+                     there is a Gender column is there and you want the count of male and female then 
+                     we can use this.
+
+                     simply counts the Category values in columns.
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = read_csv_data['Gender'].value_counts()
+
+    print(result) 
+
+    # output:
+    Gender
+    Male          123
+    Female        117
+    Non-Binary     10
+    Name: count, dtype: int64
+
+
+  * Grouping of data - grouping means putting rows with same value together so you can perform     
+                       calculation on each group.
+
+                       for example in a dataset there is a Department cloumn is there and it contains different department and you need the avg students across the department then
+                       we can use this.
+
+                       simply grouping can be held on Category data.
+
+                       here we need two colums - one is for grouping(Category cloumn) and another is for perform operations(numerical column).
+
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = read_csv_data.groupby(['Gender'])['Salary'].mean()
+
+    print(result)
+
+    # output:
+
+    Gender
+    Female        93658.789474
+    Male          93140.315789
+    Non-Binary    85418.000000
+    Name: Salary, dtype: float64
+
+  * Feature Engineering - means creating new column from exsiting cloumns. for example if a dataset 
+                          is related to loan containing columns like cibil_score and salary then we can create a new column for eligibility for loan.
+
+
+
+
+* Pivot table - groups data and presents the results in a table format, making comparisions easier.
+
+                Pivot table contains three parameters:
+                index - row
+                columns - columns
+                values - it should be numerical column only
+
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = pd.pivot_table(data=read_csv_data, index=['Gender'], columns=['Department'], values=['Salary'])
+
+    print(result) # we can pass multiple column names in index
+
+    # output: 
+
+                      Salary                                                          
+    Department   Engineering        Finance             HR     Marketing         Sales
+    Gender                                                                            
+    Female      98866.625000   94251.800000  102841.785714  82595.625000  89594.343750
+    Male        86521.428571  108704.388889  101971.500000  98001.888889  88385.133333
+    Non-Binary           NaN   84579.500000   59153.000000  90054.000000  89152.000000
+
+
+* Merging Data Frames - merging means combining two data frame based on common column . here two 
+                        parameters are very important one is 'on' here we must pass common column_name between two data frames. if there is no common column_name then merge won't happen.
+
+                        * another parameter is 'how'. here they are two types is there. 
+                            i> inner -> it will merge based on common data i.e row numbers
+                            ii> outer -> it will merge all data together.
+
+
+  import pandas as pd
+
+  result = pd.merge(students, marks, on='studentId', how='inner')
+
+  print(result)   
+
+
+* Exporting the result dataset 
+
+    import pandas as pd
+
+    read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+    result = pd.pivot_table(data=read_csv_data, index=['Gender', 'Join_Date'], columns=['Department'], values=['Salary'])
+
+    print(result.to_csv('raju.csv')) # it will create a csv file and add the result to it.
+
+
+* Aggregrate functions: min(), max(), sum(), mean()
+
+  # whole date frame
+
+  import pandas as pd
+
+  read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+  result = read_csv_data.mean(numeric_only=True)
+  result1 = read_csv_data.min(numeric_only=True)
+  result2 = read_csv_data.max(numeric_only=True)
+  result3 = read_csv_data.sum(numeric_only=True)
+  result4 = read_csv_data.median(numeric_only=True)
+  result5 = read_csv_data.count()
+  print(result5) 
+
+  # if you want to apply Aggregrate functions to single column then you like this:
+
+  import pandas as pd
+
+  read_csv_data = pd.read_csv('pandas_practice_dataset copy.csv')
+
+  result = read_csv_data['Age'].mean(numeric_only=True)
+
+  print(result) 
