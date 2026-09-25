@@ -1,0 +1,403 @@
+Machine Learning (ML): ML is a subset of Artificial Intelligence (AI) that enables computers to learn 
+                       patterns from data and make predictions or decisions without being explicitly programmed for every task.
+
+                       labeled data means data where the correct output (label/target) is already provided.
+
+
+Two types of Machine Learning:
+
+ 1. Supervised Learning: Supervised learning is a type of ML where a model is trained using labeled data, 
+                         meaning the input data is provided along with the correct output (target)
+
+    Common tasks:
+
+    Classification: Predicting categories, e.g., spam/not spam. i.e if the label type is categories then 
+                    we will use Classification
+
+    Regression: Predicting numerical values, e.g., house prices. i.e if the label type is numerical then 
+                we will use Regression
+
+
+ 2. Unsupervised Learning: Unsupervised learning is a type of ML where a model is trained using unlabeled 
+                           data. The model discovers hidden patterns, groups, or relationships in the data on its own.
+
+
+    Common tasks:
+
+    Clustering: Grouping similar data points.
+
+    Association: Finding relationships between items.
+
+
+
+Regression:
+
+linear Regression: Linear Regression is a supervised machine learning algorithm used to predict a 
+                   continuous numerical output by finding a linear relationship between one or more input features and the output.
+
+                   linear Regression is a process of Predicting numerical values with the help of best fit line.
+
+                   It finds the best-fitting straight line through the data and uses that line to make predictions.
+
+                   the main purpose is to predict a continuous numerical value and understand the relationship between input variables and the output.
+
+
+    Assumptions of Linear Regression: Assumptions are conditions that should approximately be true for 
+                                      Linear Regression to work properly, particularly when you want reliable statistical inference.
+
+
+        * linearity - each independent column should be linear to target    
+                      columns. that means each column to target coumns either should increasing or decreasing, it should be straight line not up and down line.
+
+
+        * No multicollinearity - no linearity between two independent columns. like no two independent 
+                                 coumns shouldn't be a straight line. if linearity is there between two independent columns then we will choose only one columns. if we use both then model will confuse.
+
+        * No AutoCorrection - there shouldn't be any dependency between the rows 
+
+
+
+    How linear regression works: Linear Regression finds the slope and intercept of the best-fitting 
+                                 straight line by minimizing the sum of squared errors between actual and predicted values, and then uses that line to predict continuous numerical outputs.
+
+
+
+
+        * Find the relationship: The model takes input (X) and output (Y) data and tries to find a linear 
+                                 relationship between them using ŷ = b₀ + b₁x.
+
+        * Calculate predictions: Using the learned slope (b₁) and intercept (b₀), it calculates predicted 
+                                 values (ŷ) for the training data.
+
+        * Calculate error: It calculates the difference between actual and predicted values and minimizes 
+                           the Sum of Squared Errors (SSE)
+
+        * Find the best-fit line: The slope and intercept that produce the minimum SSE give the best-fit 
+                                  line, which is then used to predict values for new data
+
+
+    Bias-Variance: The relationship between training performance and testing performance is defined by 
+                   the Bias-Variance trade-off 
+
+                   The goal of training a model is to find the balance where the error is minimized for both datasets, ensuring that the model remains robust and reliable for future predictions.
+
+        The Three Main Scenarios:
+
+        * Overfitting: This occurs when the model performs exceptionally well on the training data (low 
+                       training error) but fails to generalize to new, unseen test data (high test error). It essentially "memorizes" the noise in the training set rather than learning the actual underlying patterns.
+
+        * Underfitting: This happens when the model is too simple to capture the underlying trend of the 
+                        data. In this case, the model performs poorly on both the training data and the test data.
+
+        * Good Fit: This is the ideal state where the model performs consistently well on both the 
+                    training and testing datasets, indicating it has successfully learned the general patterns without becoming overly complex or too simple (1:22:12 - 1:22:33).
+
+ 
+
+KNN: K-Nearest Neighbors is a popular supervised machine learning algorithm used for both classification 
+     and regression tasks. It is a non-parametric, lazy learning algorithm, meaning it does not "learn" a discriminative function from the training data but rather "memorizes" the dataset to perform predictions.
+
+Working Principle (Step-by-Step):
+
+ * Data Preparation (Step 1): The model stores the training dataset and its corresponding target labels.
+
+ * Distance Calculation (Step 2): For each new data point (test data), the algorithm calculates the 
+                                  distance between that point and every single point in the training set. This is typically done using Euclidean Distance
+
+ * Sorting/Ranking (Step 3): The calculated distances are sorted in ascending order to identify which 
+                             training points are "nearest" to the test point.
+
+ * K-Prediction (Step 4): The model selects the top K neighbors. The final prediction is determined by 
+                          the majority class among these K neighbors.
+
+
+Important Considerations:
+
+ * Hyperparameter (K): K is a hyperparameter defined by the user. It is best to choose an odd number for 
+                       K to avoid ties during majority voting.
+ * Hyperparameter Nature: Because the model's performance and prediction logic depend heavily on the 
+                          value of K chosen, it is referred to as a hyperparameter 
+
+
+
+
+SVM - Support Vector Machines (SVM) are a powerful supervised learning algorithm used primarily for 
+      classification tasks.
+
+      Two types of SVM. one is Linear SVM and another one is Non-Linear SVM.
+
+ * Working Principle: Linear SVM: When data is linearly separable (can be divided by a straight line), 
+                                  the SVM algorithm follows these steps to find the optimal decision boundary.
+
+
+    * Identify Closest Points: Find the data points from both classes that are closest to each other
+    
+    * Draw Boundaries: Draw parallel lines through these boundary data points(all possible parallel 
+                       lines).
+
+    * Maximize Margin: Calculate the distance between these parallel lines. The goal is to choose the set 
+                       of lines that provides the maximum distance (margin) between the two classes.
+
+    * Create Classifier: Place a final decision boundary line exactly in the middle (d/2) of this maximum 
+                         margin. This acts as the classifier to separate the two categories.
+
+
+ * Non-Linear SVM & The Kernel: When data cannot be separated by a simple straight line (non-linearly 
+                                separable), SVM uses the Kernel Trick
+
+    * Higher Dimensional Projection: The algorithm projects the 2D data into a 3D space, effectively 
+                                     adding a "depth" dimension to help create a gap between data points.
+
+    * Execution: Once in this higher-dimensional space, the standard 4-step SVM process described above 
+                 is applied to find the optimal plane.
+
+    * Return to Original Space: After classification, the model projects the results back into the  
+                                original 2D dimension, where the boundary often appears as a non-linear shape (e.g., a circle) 
+
+
+
+Decision trees - Decision trees are tree-based, flow-chart-like algorithms used in machine learning for 
+                 both classification and regression tasks
+
+ Key Concepts & Terminology:
+
+ * Root Node: The starting point of the tree, representing the entire dataset.
+ * Decision/Branch Nodes: Points where data is split based on a specific input feature.
+ * Leaf Nodes: The final output or terminal points where the decision is made.
+
+
+ using Entropy:
+
+ Working Principle: Root Selection: To build an effective tree, the algorithm must select the best 
+                    feature to split the data. This is done using criteria like Entropy or Gini Index
+
+                    entropy is used to measure of randomness or impurity
+
+ * Calculate the Parent Entropy: First, determine the entropy (a measure of randomness or impurity) of 
+                                 the target column.
+
+ * Calculate Entropy for Each Category: For each independent feature, calculate the entropy of its 
+                                        individual categories with respect to the target column . This measures the randomness remaining within those specific subsets
+
+ * Compute Weighted Entropy: Multiply the entropy of each category by its weight—the proportion of 
+                             records that fall into that category relative to the total number of records. Sum these values to get the total weighted entropy for that feature.
+
+ * Determine Information Gain: Subtract the weighted entropy of the feature from the parent entropy. This 
+                               result is known as Information Gain.
+
+ * Select the Root Node: Compare the Information Gain of all available features. The feature that 
+                         provides the highest Information Gain (meaning it reduces the most randomness) is selected as the splitting node for that part of the tree.
+
+ * This process is repeated at every branch until the tree is fully built, though care must be taken as  
+   this can lead to overfitting.
+
+
+ Advantages:
+
+ * Interpretability: They are easy to visualize and understand, mimicking human-like decision-making 
+                     flowcharts.
+ * Simplicity: Very effective for simple, non-complex datasets where relationships are clear.
+
+ Disadvantages:
+
+ * Overfitting: The biggest challenge; trees often continue splitting until they satisfy every condition 
+                in the training data, leading to poor performance on new, unseen data.
+ * Complexity: As the number of features and categories increases, the tree can become overly complex and 
+               prone to high error rates on test data (29:11-29:22).
+
+
+
+ Using Gini Index - Gini Index (Gini Impurity) is a metric used in decision trees to determine how to 
+                    split data effectively by measuring impurity. A lower Gini value indicates a better split, meaning the resulting data nodes are more pure.
+
+
+
+  Working Principle:
+
+   * Calculate Parent Gini Index: Compute the Gini for the target column using the formula.
+   
+   * Calculate Category Gini: For each independent column, calculate the Gini index for every individual 
+                              category within that column.
+
+   * Calculate Weighted Gini: Multiply the Gini index of each category by the ratio of rows it represents 
+                              and sum them up to get the final Gini value for the entire column
+
+   * Select Best Split: Choose the column with the lowest weighted Gini index, as it represents the least 
+     amount of impurity   
+
+
+  Disadvantages - Regarding its characteristics, the algorithm is considered a 'greedy' algorithm because 
+                  it always chooses the locally optimal split at each stage. However, a key limitation mentioned is that this greedy nature makes decision trees prone to overfitting.             
+
+
+
+
+Random Forest - Random Forest is a powerful supervised machine learning algorithm that builds multiple 
+                Decision Trees to form a "forest," providing more accurate and stable predictions than a single tree.
+
+
+ why we need to use it:
+
+ * While Decision Trees are easy to interpret, they suffer from overfitting, especially with complex 
+   datasets. Random Forest solves this by aggregating results from many trees, reducing the variance and making the model more robust.
+
+What is Ensembling: Ensembling is the technique of combining multiple machine learning models (often weak learners) into one single model to improve predictive performance. There are two primary types of ensembling: Bagging((Bootstrap Aggregation)) and Boosting
+
+  1. Bagging (Bootstrap Aggregation): Focuses on reducing variance by building independent models on     
+                                      different subsets of data
+
+  2. Boosting: Focuses on reducing bias by training models sequentially, where each new model corrects 
+               the errors of the previous one
+
+
+
+Working Principle of Random Forest using Bagging:
+
+ * Bootstrapping (Sampling with Replacement): The algorithm creates samples from the training data by 
+                                              randomly selecting rows with replacement . This means the same data record can appear multiple times in a single sample or across different samples.
+
+ * Building Trees: A Decision Tree is built for each of these samples using standard criteria like 
+                   Entropy or Gini Index to decide splits at each node.
+
+ * Aggregation: When making a prediction for new data, the input is passed through all trees. The final 
+                result is determined by Majority Voting (for classification) or averaging (for regression) across all trees.
+
+Advantages:
+
+ * Significantly reduces overfitting compared to single Decision Trees.
+ * Provides higher accuracy and robustness on complex datasets.
+
+Disadvantages:
+
+ * High Computational Cost: Building many trees (e.g., 100+) requires significant processing power and 
+                            memory.
+ * Time-Consuming: The training and inference process takes much longer than a single tree, especially 
+                   with large datasets.
+   
+
+
+
+Gradient Boosting - Gradient Boosting is a powerful supervised machine learning algorithm that builds 
+                    multiple weak Decision Trees sequentially, where each new tree learns from the errors made by the previous trees, gradually improving the overall model's predictions.
+
+                    The main goal of boosting is to reduce bias and improve predictive performance
+
+
+ Why do we need to use it:
+
+ * A single Decision Tree can suffer from high variance and overfitting, while a simple model can suffer  
+   from high bias and underfitting. Gradient Boosting addresses this by combining multiple weak learners sequentially, where each new tree focuses on reducing the errors of the existing model.
+
+ * Unlike Random Forest, where trees are built independently, Gradient Boosting builds trees 
+   sequentially, with every new tree trying to improve the previous model.
+
+
+ Working Principle of Gradient Boosting:
+
+ * Gradient Boosting is a boosting-based ensemble algorithm that builds Decision Trees sequentially. 
+ 
+ * It starts with an initial prediction, calculates the errors or negative gradients of the loss 
+   function, and trains a new weak Decision Tree to learn those errors. 
+ 
+ * The prediction from the new tree is multiplied by a learning rate and added to the existing model. 
+ 
+ * This process is repeated for multiple trees, with each tree correcting the errors of the previous 
+   ensemble. Finally, the predictions from all the trees are combined to produce the final prediction. 
+
+
+
+
+
+K-means Clustering - K-means clustering is a popular centroid-based(unsupervised) machine learning 
+                     algorithm used to group similar data points together. The "k" in its name represents the number of clusters you want to create from your dataset.
+
+
+ Working Principle of K-means clustering:
+
+ * Define K: First, you must decide how many clusters (k) you want to form.
+
+ * Initialize Centroids: Choose random starting points, known as centroids, for each of your clusters.
+                         i.e Select random K points or centroids (it can be other from the input data)
+
+ * Assign Data Points: Use a distance formula, such as the Euclidean distance, to calculate the shortest 
+                       distance from each data point to the nearest centroid, then assign the point to that cluster.
+
+ * Update Centroids: Once the point is assigned, calculate the new mean of the points in each cluster 
+                     to find the updated centroid.
+
+ * Repeat: Continue assigning points and updating centroids until the clusters become stable.
+
+
+
+
+
+Naive Bayes - The Naïve Bayes classifier is a supervised machine learning algorithm based on Bayes' 
+              Theorem, primarily used for classification problems involving high-dimensional datasets. It is called 'Naïve' because it assumes the occurrence of certain features is independent of others, and 'Bayes' because it relies on the principles of Bayes' Theorem 
+
+
+ Why do we need to use it:
+
+ * Some classification problems can have a large number of features, especially text-based problems such 
+   as spam detection, sentiment analysis, and document classification.
+
+ * Algorithms like Naive Bayes can efficiently calculate the probability of each class and select the   
+   class with the highest probability.
+
+ * It is particularly useful when we need a fast and computationally efficient classification algorithm, 
+   especially for high-dimensional datasets.
+
+ Working principle of Naive Bayes:
+ 
+ * Create a Frequency Table: Count how frequently each feature value occurs for each target class.
+
+ * Create a Likelihood Table: Calculate the probability of each feature value occurring given a 
+   particular target class.
+
+ * Apply Bayes’ Theorem: Calculate the posterior probability for each target class using the prior 
+   probability and feature likelihoods.
+
+ * Make the Prediction: Compare the posterior probabilities and assign the class with the highest  
+   probability as the final prediction.
+
+
+ Disadvantages:
+
+ * The model incorrectly treats all features as unrelated, leading to inaccurate predictions when  
+   real-world data contains dependencies. Because it fails to account for how features influence each other, its performance suffers compared to models that recognize complex relationships
+
+
+
+
+Principle Component Analysis(PCA) - Principal Component Analysis (PCA) is a powerful unsupervised 
+                                    learning algorithm technique used in Machine Learning for  
+                                    dimensionality reduction. Its primary purpose is to simplify high-dimensional datasets while retaining as much relevant information as possible, effectively converting data from a higher-dimensional space into a lower-dimensional one.
+
+ Working Principle of PCA:
+
+ * Standardize the Data: Scale the features to a similar range so that features with larger values do not 
+                         dominate the PCA calculation.
+
+ * Calculate the Mean: Calculate the mean of each feature and center the data by subtracting the mean 
+                       from each feature value.
+
+ * Compute the Covariance Matrix: Calculate the covariance matrix to understand how the features vary 
+                                  with respect to each other.
+
+ * Calculate Eigenvalues and Eigenvectors: Calculate the eigenvalues and corresponding eigenvectors of 
+                                           the covariance matrix.
+
+     Eigenvalues → represent the amount of variance captured.
+     Eigenvectors → represent the directions of the new principal components.
+
+ * Select Principal Components: Sort the eigenvalues in descending order and select the eigenvectors 
+                                corresponding to the largest eigenvalues.
+
+ * Calculate Principal Components: Project the original data onto the selected eigenvectors to obtain the 
+                                   new lower-dimensional representation.
+
+
+
+
+
+
+

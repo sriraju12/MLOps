@@ -1,0 +1,619 @@
+scikit-learn is a popular open-source Python library for machine learning. It provides ready-to-use tools for training models, evaluating them, and preprocessing data.
+
+Common uses include:
+
+Classification: predicting categories (e.g., spam vs. not spam)
+
+Regression: predicting numbers (e.g., house prices)
+
+Clustering: grouping similar data points
+
+Dimensionality reduction: simplifying complex datasets
+
+Data preprocessing: scaling, encoding, and splitting data
+
+Model evaluation: cross-validation and performance metrics
+
+
+sklearn.datasets - it is a module in scikit-learn that provides datasets for practicing and 
+                   testing machine-learning algorithms.
+
+                   * A dataset is simply a collection of data that a machine-learning model can  
+                     learn from.
+
+
+                   * Normally Scikit learn gives the dataset in numpy array format but if you 
+                     want in pandas data frame format then you need to use like this:
+
+                     syntax: (as_frame=True).frame
+
+                     as_frame=True → "use pandas DataFrames"
+                     .frame → "give me the complete DataFrame"
+
+
+                        from sklearn.datasets import load_iris
+
+                        data = load_iris(as_frame=True).frame     # we need
+
+                        print(data)
+
+
+                   * return_X_y=True means return the features (X) and target (y) separately.
+
+                     syntax: X, y = load_iris(return_X_y=True)
+
+                     here X -> features (input/features used to make predictions)
+                          y -> target (output/target that we want to predict)
+
+
+                          from sklearn.datasets import load_iris
+                            
+                          X, y = load_iris(return_X_y = True)
+
+                          print(y)
+
+                    we can use both like this also:
+
+                    X, y = load_iris(
+                        return_X_y=True,
+                        as_frame=True
+                    )
+
+
+splitting data - Splitting data means dividing a dataset into separate parts, usually training  
+                 data and testing data, so we can train and evaluate a machine-learning model.
+
+  Training data → used by the model to learn patterns.
+
+  Testing data → used to check how well the model works on data it hasn't seen before.
+
+    from sklearn.datasets import load_iris
+    from sklearn.model_selection import train_test_split
+
+    X, y = load_iris(return_X_y=True)
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2) # 20% testing and 80% training
+
+    Here, X_train -> features for training
+          X_test -> features for testing
+          y_train -> targets for training
+          y_test -> targets for testing
+
+
+Stratified Shuffle Split - Stratified Shuffle Split is a way to split a dataset randomly while  
+                           keeping the same proportion of each class in every split.
+
+                           It's useful when you have classification data
+                           
+                            from sklearn.datasets import load_iris
+                            from sklearn.model_selection import StratifiedShuffleSplit
+
+                            X, y = load_iris(return_X_y=True)
+
+                            split = StratifiedShuffleSplit(n_splits=1, test_size=0.2)
+
+                            for train_idx, test_idx in split.split(X, y):
+                                X_train, X_test = X[train_idx], X[test_idx]
+                                y_train, y_test = y[train_idx], y[test_idx]
+
+
+Diff blw train_test_split vs StratifiedShuffleSplit:
+
+train_test_split - Splits your dataset into one training set and one testing set. (split once)
+
+StratifiedShuffleSplit - Randomly shuffles and splits your dataset into multiple
+                         train/tessets.( shuffle and split many times while preserving class proportions)
+
+
+
+
+PreProcessing - Preprocessing means cleaning and transforming raw data into a format that a 
+                machine-learning model can use effectively.
+
+                preparing your raw data before giving it to the ML model.
+
+
+
+
+  Feature scaling - it is a technique used in machine learning to bring different numerical data columns 
+                    to the same range
+
+   Why it is used:
+
+    * Preventing Bias: It ensures that every feature contributes equally to the model, preventing it from 
+                       becoming biased toward features with larger numerical values.
+
+    * Faster Processing: Bringing all features to a common scale helps algorithms converge more quickly, 
+                         as they don't have to adjust to widely different ranges for every row of data.
+    
+    The two primary methods mentioned are Standardization (scaling based on mean and standard deviation) and Min-Max Scaling (scaling to a specific range, usually between 0 and 1) 
+
+    * StandardScaler - Standard scaling is a preprocessing technique that transforms numerical data so 
+                       that it has a mean of 0 and a standard deviation of 1.
+
+                       standardScaler uses this formula:
+
+                       z = (x - mean) / standard deviation
+
+                       Standard scaling puts them onto a similar scale, which can help algorithms that are sensitive to feature magnitude.
+
+                       * fit(), transform(), fit_transform()
+
+                       fit() - learns the required information from the data. For StandardScaler, fit() calculates: mean() and std() which is Standard deviation(spread of data around mean)
+
+                       transform() uses what was learned by fit() to change the data.
+
+                       fit()
+                        ↓
+                        Learn mean and standard deviation
+                        ↓
+                        transform()
+                        ↓
+                        Scale the data
+
+
+                        fit_transform() - it does fit() + transform() together.
+
+                        in simple: fit() - learn
+                                   transform() - apply
+                                   fit_transform -  fit() + transform()
+
+
+                        TRAINING DATA
+                            ↓
+                        fit_transform()
+                            ↓
+                        learn + transform
+
+
+                        TEST DATA
+                            ↓
+                        transform()
+                            ↓
+                        only transform using what was learned
+
+
+                        from sklearn.datasets import load_iris
+                        from sklearn.model_selection import train_test_split
+                        from sklearn.preprocessing import StandardScaler
+
+                        X, y = load_iris(return_X_y=True)
+
+                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+                        scaler = StandardScaler()
+
+                        X_train_scaled = scaler.fit_transform(X_train)
+                        X_test_scaled = scaler.transform(X_test)
+
+                        
+
+   * MinMaxScaler - MinMaxScaler is a preprocessing technique that scales numerical values to a specific 
+                    range, usually between 0 and 1.
+
+                    basic formula: scaled value = (x - minimum) / (maximum - minimum)
+
+
+
+   * Encoding in Preprocessing - Encoding means converting categorical (text) data into numerical values 
+                                 so that a machine-learning model can use it.
+
+
+
+        * One-Hot Encoding - One-Hot Encoding converts categorical values into separate binary (0/1)      
+                             columns.
+
+                             It is mainly used when categories do not have a meaningful order.
+
+                             Each row has a 1 for its category and 0 for the others.
+
+                             take example as city
+
+                             City	     Bangalore 	Mumbai	Delhi
+                             Bangalore	   1	       0	   0
+                             Mumbai	       0	       1	   0
+                             Delhi	       0	       0	   1
+                             Bangalore	   1	       0	   0
+
+
+
+        * Ordinal Encoding - Ordinal Encoding converts categories into numbers while preserving their 
+                             meaningful order or ranking.
+
+                             take education as example, here there is an order is there
+
+                             School < Bachelor < Master < PhD
+
+                             Person	Education	Encoded
+                                A	School	     0
+                                B	Bachelor	 1
+                                C	Master	     2
+                                D	PhD	         3
+
+
+
+        * Label Encoding - Label Encoding is a categorical data preprocessing technique that converts   
+                           each distinct category or text label into a unique integer value (e.g., $0, 1, 2, \dots, N-1$).
+
+                           In Scikit-Learn, LabelEncoder is specifically designed to encode target variables ($y$) in classification tasks.
+
+
+        Difference between One-Hot Encoding vs Ordinal Encoding:
+
+        One-Hot Encoding -  Converts each category into a separate 0/1 column. Use it when categories do 
+                            not have an order.
+
+        Ordinal Encoding - Converts categories into numbers that represent their order. Use it when     
+                           categories have a meaningful order.                    
+
+
+Classification - Classification is a machine-learning task where a model learns to predict a category or 
+                 class.
+
+                 irespective of alogorithms for classification we commonly use fit(), predict() and score
+                 or fit(), predict() only.
+
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+# 1. Load dataset
+X, y = load_iris(return_X_y=True)
+
+# 2. Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+# 3. Create classification model
+model = KNeighborsClassifier()
+
+# 4. Train the model
+model.fit(X_train, y_train)
+
+# 5. Make predictions
+y_pred = model.predict(X_test)
+
+# 6. Check accuracy
+accuracy = model.score(X_test, y_test)
+
+print("Predictions:")
+print(y_pred)
+
+print("Accuracy:")
+print(accuracy)
+
+
+Regression - Regression is a machine-learning task where the model predicts a numerical value.
+
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+# 1. Load dataset
+X, y = fetch_california_housing(return_X_y=True)
+
+# 2. Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+# 3. Create regression model
+model = LinearRegression()
+
+# 4. Train the model
+model.fit(X_train, y_train)
+
+# 5. Make predictions
+y_pred = model.predict(X_test)
+
+# 6. Check model score
+score = model.score(X_test, y_test)
+
+print("Predictions:")
+print(y_pred[:10])
+
+print("R² Score:")
+print(score)
+
+
+
+Difference between Classification vs Regression:
+
+Classification -  Predicts a category like spam/not spam 
+
+Regression - Predicts a number like salary, price
+
+
+
+CLustering - Clustering is an unsupervised machine-learning technique that automatically groups similar 
+             data points together.
+
+             Unsupervised machine learning is a type of machine learning where the model learns patterns or groups from data without being given the correct answers (target labels).
+
+             Supervised = data + answers. Classification comes under it.
+             Unsupervised = data without answers. Clustering comes under it.
+
+
+
+Metrics - Metrics are measurements used to evaluate how well a machine-learning model is performing.
+
+          These four metrics are used to evaluate a classification model.
+
+          accuracy_score, precision_score,
+
+          Accuracy score - Accuracy tells us what percentage of all predictions were correct.
+
+                           syntax -  Accuracy = Correct Predictions / Total Predictions
+
+          precision_score - Precision tells us Of everything the model predicted as positive, how many 
+                            were actually positive?
+
+                            Precision = When I say "positive", how often am I right?
+
+
+          recall_score - Recall tells us: Of all the actual positive cases, how many did the model  
+                         correctly find   
+
+                         Recall = Of all the actual positives, how many did I find?
+
+
+          f1_score - F1-score is a combined metric that balances Precision and Recall.   
+
+
+          Metric	 Ask this question
+          
+          Accuracy	 How many predictions were correct overall?
+          Precision	 When I say YES, am I usually right?
+          Recall	 Did I find most of the actual YES cases?
+          F1	     How well are Precision and Recall balanced?           
+
+
+
+Cross Validation - it is a technique used to test how well a machine learning model performs on unseen 
+                   data.
+
+                   instead of splitting your dataset into just one training set and one testing set. cross
+                   vaidation splits your data into multiple sections(called folds), trains the model on some folds and tests it on the remaining folds. this process repeats until every fold has been used as a test set.
+
+                   cross validation is used to detect and evaluate Overfitting and to help select a model that generalizes well to unseen data.
+
+                   cross_val_score: Runs cross-validation and returns an array of scores for a single metric
+
+                   cross_validate: Similar to cross_val_score, but supports multiple metrics and returns additional metadata like fit times and score times.
+
+from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, cross_validate
+
+X, y = load_iris(return_X_y=True)
+model = RandomForestClassifier(random_state=42)
+
+# Single metric evaluation
+scores = cross_val_score(model, X, y, cv=5, scoring="accuracy")
+
+# Multi-metric evaluation with timing information
+multi_scores = cross_validate(
+    model, X, y, cv=5, scoring=["accuracy", "f1_macro"], return_train_score=False
+)      
+
+
+Hyperparameter tuning -  Before a machine learning model starts learning, you have to set its main 
+                         settings 
+
+                         Hyperparameter Tuning is an optimization process that searches for the configuration of external model parameters (settings that cannot be learned directly during training) that maximizes performance on cross-validation metrics.
+
+
+
+    * GridSearchCV - Performs an exhaustive search over a user-defined hyperparameter grid. It constructs 
+                     and evaluates a model for every possible Cartesian product of the supplied parameter 
+                     values using cross-validation.
+
+                     it is like a Checklist Approach
+
+                     for simple baking example:
+
+                     You write down a list of specific combinations (e.g., 350°F for 30 mins on middle rack, 350°F for 35 mins on top rack, etc.) and bake a test cake for every single combination on your list. It guarantees you try everything you planned, but it takes a very long time. 
+
+                    from sklearn.datasets import load_iris
+                    from sklearn.ensemble import RandomForestClassifier
+                    from sklearn.model_selection import GridSearchCV
+
+                    X, y = load_iris(return_X_y=True)
+
+                    # Define exact parameter values to evaluate
+                    param_grid = {
+                        'n_estimators': [10, 50, 100],      # 3 options
+                        'max_depth': [3, 5, None]            # 3 options
+                    }
+
+                    # Evaluates all 3 x 3 = 9 combinations using 5-fold CV (45 total fits)
+                    grid = GridSearchCV(
+                        estimator=RandomForestClassifier(random_state=42),
+                        param_grid=param_grid,
+                        cv=5,
+                        scoring='accuracy'
+                    )
+                    grid.fit(X, y)
+
+                    print("Best Parameters (Grid):", grid.best_params_)
+
+
+    * RandomizedSearchCV - Performs an exhaustive search over a user-defined hyperparameter grid. It 
+                           constructs and evaluates a model for every possible Cartesian product of the supplied parameter values using cross-validation    
+
+                           it is like a Lucky Dip   
+
+                           Instead of testing every option, you set ranges for each knob and randomly pick a set number of recipes to try (e.g., test 10 random combinations). It is much faster, saves a lot of time, and usually finds a recipe that is almost as good as the absolute best one.   
+
+
+                            from scipy.stats import randint
+                            from sklearn.datasets import load_iris
+                            from sklearn.ensemble import RandomForestClassifier
+                            from sklearn.model_selection import RandomizedSearchCV
+
+                            X, y = load_iris(return_X_y=True)
+
+                            # Define parameter distributions instead of fixed lists
+                            param_dist = {
+                                'n_estimators': randint(10, 200),   # Continuous range
+                                'max_depth': [3, 5, 10, None]
+                            }
+
+                            # Randomly samples only 10 combinations regardless of space size
+                            random_search = RandomizedSearchCV(
+                                estimator=RandomForestClassifier(random_state=42),
+                                param_distributions=param_dist,
+                                n_iter=10,
+                                cv=5,
+                                scoring='accuracy',
+                                random_state=42
+                            )
+                            random_search.fit(X, y)
+
+                            print("Best Parameters (Random):", random_search.best_params_)    
+
+
+
+Pipeline - A Scikit-Learn Pipeline is a sequential container that chains multiple data transformers and a 
+           final estimator into a unified object to automate data workflows and prevent data leakage.
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+
+# 1. Load data & split
+X, y = load_iris(return_X_y=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+
+# 2. Define the Pipeline (Transformers first, Estimator last)
+pipe = Pipeline([
+    ('scaler', StandardScaler()),  # Step 1: Scale features
+    ('model', SVC(kernel='rbf'))    # Step 2: Fit SVM classifier
+])
+
+# 3. Fit pipeline on training data
+pipe.fit(X_train, y_train)
+
+# 4. Predict on unseen test data (scales test data automatically using training parameters)
+accuracy = pipe.score(X_test, y_test)
+print(f"Test Accuracy: {accuracy:.4f}")          
+
+
+
+
+
+
+
+
+
+                       
+
+
+
+  
+
+
+
+
+
+
+                          
+
+
+
+
+
+SCIKIT-LEARN WORKFLOW STEPS:
+
+1.Data Ingestion & Splitting (train_test_split): Load dataset $X$ (features) and $y$ (target), then 
+                                                 separate into training and testing sets to evaluate generalization.
+2.Preprocessing & Feature Engineering (ColumnTransformer / Pipeline): Handle missing values 
+                                                                    (SimpleImputer), encode categorical variables (OneHotEncoder), and normalize/scale continuous features (StandardScaler)
+3.Model Instantiation: Initialize the target estimator with initial hyperparameter values.
+4.Pipeline Construction (Pipeline): Bundle intermediate transformers and the final estimator into a 
+                                    single object to prevent data leakage during validation.
+5.Hyperparameter Tuning & Evaluation (GridSearchCV / cross_val_score): Optimize estimator configurations 
+                                                                        using cross-validation on the training set.
+6.Model Training (fit): Fit the pipeline on the full training dataset using the selected optimal 
+                        hyperparameters
+7.Model Evaluation & Prediction (predict / score): Evaluate performance metrics on the held-out test set 
+                                                   and generate inference predictions on new data.
+
+
+
+
+preprocessing process:
+
+
+ * Data Loading and Inspection: You begin by loading the dataset into a DataFrame to understand its 
+                                structure. Using tools like df.info() and df.describe(), you identify column types, missing values, and statistical distributions to determine what cleaning is required.
+
+ * Defining Target and Feature Columns: You separate the variable you want to predict (the 'Target') from 
+                                        the variables used to make that prediction (the 'Features'). You also drop irrelevant columns, such as names or addresses, that do not help the model learn meaningful patterns.
+
+ * Feature Engineering: This involves creating new, useful information from existing data. For example, 
+                        by converting a 'Date' column into a datetime object, you can extract specific components like Year, Month, and Day to capture temporal trends.
+
+ * Separating Data Types: Machine learning models require numerical input. You must separate your 
+                          features into numerical and categorical subsets so that each can be processed using appropriate techniques.
+
+ * Building ML Pipelines: Pipelines are used to automate data processing steps:
+        
+        Numerical Pipeline: Uses SimpleImputer to fill missing values with the median and StandardScaler 
+                            to normalize the data range, which helps the model process variables of different scales equally.
+
+        Categorical Pipeline: Uses SimpleImputer to fill missing values with the most frequent category 
+                              and OneHotEncoder to convert text categories into numerical binary format (0s and 1s).
+
+* Column Transformation: Using ColumnTransformer, you combine these separate pipelines so that both 
+                         numerical and categorical transformations are applied to the dataset simultaneously.
+
+* Train-Test Split: You split your dataset into two parts—one for training the model and another for 
+                    testing. This ensures you can evaluate how well your model performs on new, unseen data.
+
+
+steps that needs to be used for preprocessing:
+
+* Data Loading & Inspection: Load the dataset and analyze its structure.
+    df = pd.read_csv('your_file.csv')
+    df.info()
+
+* Defining Target & Features: Separate the target variable (what you want to predict) from the features (data used for prediction) and remove irrelevant columns.
+    y = df['Price']
+    x = df.drop(columns=['Price'])
+    Note: Irrelevant columns like 'Address' or 'Seller' are removed here using df.drop().
+
+* Feature Engineering: Convert raw dates into meaningful numerical data that a model can understand.
+
+    Convert to datetime: df['Date'] = pd.to_datetime(df['Date'], dayfirst=True)
+
+    Extract components: x['Sold_Year'] = x['Date'].dt.year x['Month'] = x['Date'].dt.month x['Day'] = x['Date'].dt.day
+
+    Remove original Date: x = x.drop(columns=['Date'], axis=1)
+
+* Handling Data Types: Separate columns into numerical and categorical types so they can be processed differently.
+    num_cols = x.select_dtypes(include=['number']).columns
+    cat_cols = x.select_dtypes(exclude=['number']).columns
+
+* Building Pipelines: Automate data cleaning and transformation.
+
+    Numerical: Fills missing values with the median and scales the data. 
+    num_pipe = Pipeline([('imputer', SimpleImputer(strategy='median')), ('scaler', StandardScaler())])
+
+    Categorical: Fills missing values with the most frequent category and encodes text as numbers. cat_pipe = Pipeline([('imputer', SimpleImputer(strategy='most_frequent')), ('encoder', OneHotEncoder())])
+
+* Column Transformation: Combine the pipelines to process the entire dataset.
+    preprocessor = ColumnTransformer([('num', num_pipe, num_cols), ('cat', cat_pipe, cat_cols)], remainder='drop')
+
+* Train-Test Split: Divide the data to train the model and test its performance on unseen data.
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.10)
