@@ -1,0 +1,415 @@
+Model Deployment - Model deployment means taking a trained ML model from the development/training 
+                   environment and putting it into a production environment where it can be used.
+
+
+                   Data → Train Model → Evaluate → Save Model
+                         ↓
+                   Deploy Model
+                         ↓
+                   Production Environment
+flow:
+
+MLflow Model Registry
+        ↓
+Docker Image
+        ↓
+Kubernetes / EKS
+        ↓
+Production
+
+Model deployment is the process of taking a trained and validated machine learning model and making it available in a production environment so that it can be used for predictions.
+
+
+Model Serving - Model serving means providing a mechanism through which applications or users can send 
+                input to the deployed model and receive predictions.
+
+
+Application
+     |
+     | POST /predict
+     ↓
+Model API
+     |
+     ↓
+ML Model
+     |
+     ↓
+Prediction
+
+Model serving is the process of exposing a deployed ML model through an API or inference endpoint so that applications can send input data and receive predictions.
+
+
+Popular ways to deploy and serve models:
+
+1. using VM's
+2. using Kubernetes(create Docker inage > deployment > svc > ingress)
+3. using aws sagemaker(fully managed ML service)
+4. using Kserve
+
+
+
+IN Locally how we use the test the model:
+
+* we will create virtual environment, install required dependencies and run the train model python file
+  (i.e train.py)
+
+* ML engineers create the API for it(app.py) and we will run that file.
+
+* we will send the curl request to that model to predict the results.
+
+
+1. Now Let's see the steps for using VM's for deploy and serve the model:
+
+* in the VM, we will create the virtual environment and install required dependencies
+
+* we will run the train model python file(i.e train.py)
+
+* Now, we need the WSGI, so we will install and we will create a python file and in that import api (from 
+  app.py) and assign that to some variable.
+
+   import app from app
+
+   application = app
+
+* here instead of running the app.py, we will run the guniron command.
+
+* for high availablity, we will use the ASG(AutoScaling Groups) with UserData(for configurations).
+
+* UserData script will be executed during the VM creation.
+
+   script typically contains this:
+
+     * creating virtual environment
+     * installing dependencies through requirements.txt
+     * run the model(train.py)
+     * run the wsgi using guniron(as systemd process)
+     * run the nginx for reverse proxy.
+
+
+
+2. using Kubernetes as model deployment and serving:
+
+1. Train ML Model
+       ↓
+2. Track Experiment in MLflow
+       ↓
+3. Register Model in MLflow Model Registry
+       ↓
+4. Select / Approve Production Model Version
+       ↓
+5. Store Model Artifact
+   (S3 / Object Storage)
+       ↓
+6. Create Model Serving Application(API)
+   (FastAPI / Flask)
+       ↓
+7. Create Docker Image
+       ↓
+8. Push Image to Container Registry
+   (ECR / Docker Hub)
+       ↓
+9. Create Kubernetes Deployment
+       ↓
+10. Kubernetes creates & manages Pods
+       ↓
+11. Create Kubernetes Service
+       ↓
+12. Expose Model API
+    (Ingress / LoadBalancer)
+       ↓
+13. Application sends Prediction Request
+       ↓
+14. Pod loads Model & performs Inference
+       ↓
+15. Prediction returned to Application
+       ↓
+16. Monitor & Scale
+    (Prometheus / Grafana + HPA)
+
+
+
+3. Kserve - KServe is a Kubernetes-native model serving platform used to deploy and serve machine 
+            learning models in production
+
+            KServe is a Kubernetes-native model serving platform that provides a standardized way to deploy ML models as inference services, with features such as autoscaling, canary deployments, health checks, and scale-to-zero.
+
+            KServe provides pre-built serving runtimes for popular ML frameworks such as Scikit-learn, PyTorch, TensorFlow and XGBoost. This reduces the need to develop and maintain custom inference APIs for each framework, while also providing Kubernetes-native features such as autoscaling, scale-to-zero and canary deployments.
+
+            KServe = I have a trained model; give me a production inference endpoint without me having to build the entire serving API myself.
+
+
+Architecture of Kserve:
+
+                         Client / Application
+                                |
+                                | Prediction Request
+                                ↓
+                       Inference Endpoint
+                                |
+                                ↓
+                    ┌─────────────────────┐
+                    │       KServe        │
+                    │                     │
+                    │  InferenceService   │
+                    └──────────┬──────────┘
+                               |
+                               ↓
+                    KServe Controller
+                               |
+                               ↓
+                     Kubernetes API Server
+                               |
+                ┌──────────────┼──────────────┐
+                ↓              ↓              ↓
+            Predictor      Transformer     Explainer
+                |
+                ↓
+          Model Server
+       ┌────────┼────────┐
+       ↓        ↓        ↓
+   sklearn   PyTorch   XGBoost
+                |
+                ↓
+          Model Artifact
+          S3 / Storage
+
+
+
+Predictor - Predictor is the core KServe component responsible for loading the trained ML model and 
+            performing inference (prediction) on incoming requests.
+
+                                        Client Request
+                                            ↓
+                                        Predictor
+                                            ↓
+                                        Model Server
+                                            ↓
+                                            Model
+                                            ↓
+                                        Prediction
+
+            For example, if you have a trained Scikit-learn model, the Predictor uses an appropriate model-serving runtime to load the model and generate predictions.
+
+            Predictor = component responsible for making predictions.
+
+
+Transformer - Transformer is an optional KServe component used to perform preprocessing before prediction 
+              and/or postprocessing after prediction.
+
+              For example, suppose your model expects normalized numerical features but the application sends raw data.
+
+
+                                        Raw Request
+                                            ↓
+                                        Transformer
+                                            ↓
+                                        Preprocessing
+                                            ↓
+                                        Predictor
+                                            ↓
+                                        Model
+                                            ↓
+                                        Prediction
+                                            ↓
+                                        Transformer
+                                            ↓
+                                        Final Response
+
+              It can perform things like:
+
+                * Feature preprocessing
+                * Input transformation
+                * Output transformation
+                * Data formatting
+                * Postprocessing
+
+
+              Transformer = prepares the input before the model and/or processes the output after the model.
+
+
+Explainer - Explainer is an optional KServe component used to provide explanations for a model's 
+            predictions.
+
+
+                                        Request
+                                        ↓
+                                        Predictor
+                                        ↓
+                                        Model
+                                        ↓
+                                        Prediction
+                                        ↓
+                                        Explainer
+                                        ↓
+                                        Explanation
+
+            Explainer = explains why the model produced a particular prediction.
+
+
+
+Model Server - Model Server is the serving runtime that loads the trained model into memory and handles 
+               inference requests for a specific ML framework
+               
+
+                                            Model
+                                            ↓
+                                            Model Server
+                                            ↓
+                                            Loads model
+                                            ↓
+                                            Receives request
+                                            ↓
+                                            Runs inference
+                                            ↓
+                                            Returns prediction
+
+
+                Model Server = the actual server/runtime that loads the model and executes inference.
+
+
+
+
+
+
+They are two imporantant resouces in kserve:
+
+1. InferenceService CRD - InferenceService is a KServe Custom Resource that defines how an ML model 
+                          should be deployed and served on Kubernetes.
+
+                          It tells KServe things like:
+
+                            * Which model to serve
+                            * Where the model is stored
+                            * Which framework/runtime to use
+                            * CPU/memory requirements
+                            * Autoscaling configuration
+                            * Traffic/canary configuration
+
+
+2. KServe Controller - KServe Controller is a Kubernetes controller that watches KServe resources such as 
+                       InferenceService and creates/manages the required resources to deploy and serve the ML model.
+
+                       working when interferenceservice is created:
+
+                        kubectl apply
+                            ↓
+                        Kubernetes API Server
+                            ↓
+                        InferenceService created
+                            ↓
+                        KServe Controller detects it
+                            ↓
+                        Controller reads the desired configuration
+                            ↓
+                        Creates/manages required serving resources
+                            ↓
+                        Model Server Pod starts
+                            ↓
+                        Model is loaded
+                            ↓
+                        Inference Endpoint becomes available
+
+NOTE:
+
+* while creating the kserve controller we can choose which one to create i.e ingress or gateway api. for 
+  that we need to update the values.yaml file for the helm chart.
+
+* Kserve controller is a cluster scoped.
+
+* installation steps:
+
+                    - install the kserve crds
+                    - install the kserve controller
+                    - deploy the inferenceService (it will create hpa > deployment > pods > svc > 
+                      ingress / gateway api)
+
+flow:
+
+Trained Model
+     ↓
+Model Registry / Storage
+     ↓
+   KServe
+     ↓
+Kubernetes
+     ↓
+Inference Endpoint
+     ↓
+Application → Prediction
+
+Why do we use KServe:
+
+Without KServe, you might have to manually create:
+
+ * Docker image
+ * Kubernetes Deployment
+ * Service
+ * Ingress
+ * Autoscaling
+ * Health checks
+ * Model loading logic
+
+KServe provides Kubernetes-native resources and controllers to simplify much of this.
+
+using Kserve as model deployment and serving:
+
+1. Train ML Model
+       ↓
+2. Track Experiment in MLflow
+       ↓
+3. Register Model in MLflow Model Registry
+       ↓
+4. Select / Approve Production Model Version
+       ↓
+5. Store Model Artifact
+   (S3 / Object Storage)
+       ↓
+6. Create KServe InferenceService
+       ↓
+7. KServe identifies the Model Server
+   (Sklearn / PyTorch / TensorFlow / etc.)
+       ↓
+8. KServe creates the required Kubernetes resources
+       ↓
+9. Kubernetes creates & manages Model Server Pods
+       ↓
+10. KServe exposes the Inference Endpoint
+       ↓
+11. Expose Endpoint
+    (Ingress / LoadBalancer)
+       ↓
+12. Application sends Prediction Request
+       ↓
+13. Model Server loads Model from S3
+       ↓
+14. Model performs Inference
+       ↓
+15. Prediction returned to Application
+       ↓
+16. Monitor & Scale
+    (Prometheus / Grafana + KServe Autoscaling)
+
+
+4. Amazon SageMaker AI - it is a fully managed AWS service used to build, train, deploy, and monitor machine 
+                      learning models.
+
+                      SageMaker AI provides managed infrastructure for the ML lifecycle, so you don't have to manually manage servers, Kubernetes, or model-serving infrastructure.
+
+
+                                                    Data
+                                                    ↓
+                                                    Model Training
+                                                    ↓
+                                                    Model Evaluation
+                                                    ↓
+                                                    Model Artifact
+                                                    ↓
+                                                    S3
+                                                    ↓
+                                                    SageMaker Model
+                                                    ↓
+                                                    SageMaker Endpoint
+                                                    ↓
+                                                    Prediction Request
+                                                    ↓
+                                                    Prediction Response
