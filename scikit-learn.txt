@@ -14,6 +14,30 @@ Data preprocessing: scaling, encoding, and splitting data
 
 Model evaluation: cross-validation and performance metrics
 
+* They are two popular fomat ways to save / package the model.
+ 
+   * .pkl
+   * .joblib
+
+
+   How the Model is created:
+
+    * collect data which is dataset
+    * clean and Preprocess data
+    * perform feature Engineering
+    * split data (training / testing) 
+    * select algorithm
+    * train the model
+    * tune hyperparameters
+    * validate the model
+    * evaluate model performance
+    * save the model
+    * package the model(docker)
+    * deploy the model
+    * monitor the model
+    * monitor the model performance
+    * retrain and update the model periodically
+
 
 sklearn.datasets - it is a module in scikit-learn that provides datasets for practicing and 
                    testing machine-learning algorithms.
