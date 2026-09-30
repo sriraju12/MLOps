@@ -1,0 +1,215 @@
+Experiment Tracking - Experiment tracking is the process of recording and managing everything related to 
+                      an ML experiment so that we can compare different experiments and reproduce the 
+                      best-performing model later.
+
+
+What do we track:
+
+| Category         | Examples                                        |
+| ---------------- | ----------------------------------------------- |
+| Parameters.      | learning rate, batch size, number of estimators |
+| Metrics          | accuracy, precision, recall, F1, RMSE           |
+| Code/version     | Git commit/version                              |
+| Dataset          | dataset version, DVC version                    |
+| Model            | trained model/artifact                          |
+| Environment      | Python/library versions                         |
+| Logs             | training logs, errors                           |
+| Artifacts.       | confusion matrix, plots, model files            |
+
+
+
+ML Flow - MLflow is an open-source platform used to manage the machine learning lifecycle. In MLOps, 
+          it helps us track experiments, package models, manage model versions, and deploy models.
+
+
+
+MLflow components:
+
+                    MLflow
+                       │
+        ┌──────────────┼──────────────┐
+        ↓              ↓              ↓
+  Experiment       Model          Model
+   Tracking       Registry       Packaging
+        │              │
+        └──────────────┴──────────────┐
+                                      ↓
+                              Model Deployment
+
+1. MLflow Tracking -  Used to track ML experiments.
+
+For every training run, you can record:
+
+Parameters → learning rate, epochs, batch size
+Metrics → accuracy, precision, F1, RMSE
+Artifacts → plots, model files
+Model → trained model
+Source/code information
+
+First, we set up MLflow Tracking Server and the required backend and artifact stores. 
+In the training code, we import MLflow and create an MLflow run. During the run, we log parameters,
+metrics, artifacts, and the trained model. MLflow stores this information, and we can use the MLflow UI
+to compare different runs and identify the model to promote to the next stage.
+
+Setup MLflow → integrate MLflow into training code → run experiments → log information → view/compare experiments → register the selected model.
+
+
+MLflow Installation Steps:
+
+* Create PostgreSQL RDS
+    Create an RDS PostgreSQL instance.
+    Create a dedicated MLflow database and user.
+    Configure network/security-group access from the Kubernetes cluster.
+
+* Create an S3 bucket
+    Create an S3 bucket for MLflow artifacts.
+    This will store models, plots, files, and other artifacts.
+
+* Create AWS IAM permissions
+    Give the MLflow Kubernetes workload permission to access the S3 bucket.
+    Prefer EKS Pod Identity/IRSA rather than static AWS access keys.
+
+* Prepare the MLflow container image
+    Create an image containing MLflow and the required PostgreSQL/S3 dependencies.
+    Push the image to your container registry, such as ECR.
+
+* Create Kubernetes Secrets
+    Store the RDS connection credentials securely.
+    Don't hardcode the database password in Kubernetes manifests.
+
+* Create a Kubernetes ServiceAccount
+    Associate the ServiceAccount with the required AWS IAM permissions for S3 access.
+
+* Deploy the MLflow Tracking Server
+    Deploy MLflow as a Kubernetes Deployment.
+    Configure it with:
+        RDS PostgreSQL as the backend store
+        S3 as the artifact store
+    Configure replicas/resources/health checks as required.
+* Create a Kubernetes Service
+    Expose the MLflow pods internally through a Kubernetes Service.
+
+* Configure Ingress / ALB
+    Expose MLflow externally if required.
+    Configure DNS and HTTPS/TLS.
+    In EKS, this can be done using the AWS Load Balancer Controller.
+
+* Access the MLflow UI
+    Open the MLflow URL and verify that the tracking server is working.
+
+* Configure MLflow in training code
+    Install/import the MLflow client in your training environment.
+    Configure the MLflow tracking URI to point to your MLflow server.
+
+* Run and track experiments
+    Create experiments.
+    Start runs.
+    Log parameters, metrics, models, and artifacts.
+
+
+                    EKS
+                     │
+              MLflow Tracking Server
+                     │
+             ┌───────┴────────┐
+             ↓                ↓
+       RDS PostgreSQL         S3
+       Backend Store      Artifact Store
+             │                │
+       Experiments          Models
+       Runs                 Plots
+       Parameters           Artifacts
+       Metrics
+
+
+
+How to connect mlflow from the terminal:
+
+ 1.export the tracking server url(mlflow typically the ALB or ingress URL)
+   
+    export MLFLOW_TRACKING_URI=<MLflow-server-URL>
+
+ 2. in python file,
+
+    import mlflow
+
+    mlflow.set_tracking_uri("https://mlflow.company.com")
+
+    mlflow.set_experiment("test-experiment") # it will create experiment
+
+
+
+Model Registry - A Model Registry is a centralized repository used to manage ML models and their versions 
+                 throughout their lifecycle. It stores model artifacts along with metadata, metrics, lineage, and deployment status. In MLflow, we can register models, create different versions, transition them through environments such as staging and production, and roll back to a previous version when required.
+
+
+what problem it is solving - The main problem a Model Registry solves is managing the growing number of 
+ML models and their versions in a production environment. It provides centralized versioning, lineage, 
+lifecycle management, controlled promotion to production, and easy rollback. This prevents confusion 
+about which model should be deployed and helps teams manage models consistently
+
+Git → manages code versions
+DVC → manages data versions
+Experiment Tracking → tracks experiments
+Model Registry → manages the models produced by those experiments
+
+
+log the model into MLFLOW:
+
+ mlflow.sklearn.log_model(
+        model,
+        "model"
+    ) - At this point, the model is stored as an artifact associated with the MLflow run.
+
+
+Register the model into model registry in MLFlow:
+
+model_uri = f"runs:/{run.info.run_id}/model"
+
+mlflow.register_model(
+    model_uri=model_uri,
+    name="fraud_detection"
+)
+
+
+After training a model, I log the model artifact to MLflow and register it with a name in the Model Registry. MLflow creates the first model version. Whenever I register a newly trained model under the same registered model name, MLflow creates a new version. I can then compare the versions and promote the validated version for deployment.
+
+
+
+Loading a registered model:
+
+model = mlflow.pyfunc.load_model(
+    "models:/fraud_detection@champion"
+)
+
+model alias - A model alias is a human-readable name that points to a specific model version in the MLflow Model Registry
+
+A model alias is a human-readable reference to a specific model version in the MLflow Model Registry. We use aliases so that applications don't have to hardcode model version numbers. For example, the application can load fraud_detection@champion. When a new model version is validated, we can move the champion alias from the old version to the new version without changing the application code. This makes model promotion and rollback easier.
+
+In MLflow, promoting a model version means deciding that a particular version is ready to move to the next deployment stage, usually based on validation results.
+
+With modern MLflow, this is commonly done using aliases rather than the older fixed Staging/Production stages.
+
+
+how do we promote the model:
+
+After registering a new model version, we evaluate it against predefined performance and validation criteria. If it passes, we promote it by assigning or moving an appropriate alias, such as champion, to that model version. The deployment system loads the model through that alias. If the new version has issues, we can move the alias back to the previous validated version for rollback.
+
+Model Signature - Model Signature is the input and output schema of an ML model. It defines what type and 
+                  structure of data the model expects as input and what it returns as output. In MLflow, we use model signatures to document and validate the model's interface, which helps prevent schema-related errors during inference and deployment.
+
+    Model Signature is part of the MLflow model definition. We specify it when logging the model, and it becomes useful when the model is registered and served because it defines the expected input and output schema.
+
+
+Overall:
+
+MLflow
+   │
+   ├── MLflow Tracking
+   │      └── Experiments, runs, parameters, metrics, artifacts
+   │
+   ├── MLflow Model Registry
+   │      └── Model versions, aliases, metadata, lineage
+   │
+   └── MLflow Models
+          └── Model packaging / standard model format / deployment
