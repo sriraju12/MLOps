@@ -1,0 +1,192 @@
+DVC - Data Version Control
+
+
+Why Git is not enough for ML projects - Git is mainly used to version source code, but ML projects also 
+                                        involve large datasets, trained models, experiments, parameters, 
+                                        and metrics.
+
+                                        Therefore, Git alone is not enough;
+                                         
+                                        tools like DVC used for data/model versioning (for datasets)
+                                                   and MLflow is used for experiment tracking
+                            
+
+Reason for git is not enough for Data Versioning:
+ 
+Git is not ideal for data versioning because datasets are usually very large, and storing every version
+directly in Git makes the repository heavy and inefficient. Tools like DVC store the actual data in
+external storage and use Git to track lightweight version references.
+
+
+
+DVC - DVC is like Git for data and ML models. It tracks different versions of datasets and models while
+      storing the actual large files in remote storage such as S3, instead of storing them directly in
+      Git.
+
+      Git → tracks code + DVC metadata (it contains .dvc, dvc config file and python scripts)
+      DVC → tracks data/model versions
+      S3  → stores actual large data/model files
+
+      Why do we need DVC:
+
+      Git is good for code versioning, but DVC is used to version large datasets and models efficiently 
+      and maintain reproducibility across ML experiments.
+
+
+Inorder to work with DVC, we need to follow these steps for setup:
+
+* install these packages dvc, dvc-s3
+
+* create a git directory for the project which contains everything like 
+  python files(for training and evaluation, testing model) i.e not pushed to github
+
+* we need to initialize dvc just like git. in the project folder, suppose we have a data folder and 
+  inside that data folder, our dataset is present.
+
+    dvc init  - This creates the .dvc directory
+
+* Add your dataset to DVC 
+
+   dvc add data/train.csv - once you run this command, .dvc file will be created(data/train.csv.dvc)
+
+   here:  DVC will:
+
+            Calculate a hash for the dataset
+            Create data/train.csv.dvc
+            Add the actual dataset to DVC's local cache
+            Tell Git to track the .dvc file instead of the large dataset
+
+* Create an S3 bucket in AWS
+
+* we need to configure AWS CLI - providing access key, secret key inorder to interact with AWS.
+   
+   aws configure
+
+* Configure S3 as the DVC remote i.e just like adding the git remote
+
+   dvc remote add -d s3remote s3://my-mlops-dvc-bucket/dvc-storage
+
+     here -d means make it the default remote
+
+    dvc remote list -> to see the dvc remote 
+
+
+  when you add the dvc remote it will create a config file(.dvc/config), 
+  It contains the DVC remote configuration, such as the S3 remote URL
+
+
+* Push the dataset to S3
+
+   dvc push - DVC will upload the data from its local cache to S3
+
+
+NOTE:
+
+* only dataset is pushed to S3
+
+* in git, we need to push python script file, .dvc/config and dataset_name.csv.dvc file.
+
+
+
+
+DVC Commands:
+
+dvc init
+→ Initializes DVC in the Git project and creates the .dvc directory.
+
+dvc add <file>
+→ Starts tracking a dataset/model with DVC and creates a .dvc metadata file.
+
+dvc status
+→ Shows whether DVC-tracked files have changed.
+
+dvc remote add -d <name> <remote-url>
+→ Configures a remote storage location such as AWS S3 for DVC.
+
+dvc remote list
+→ Shows the configured DVC remotes.
+
+dvc remote remove <name>
+→ Removes a configured DVC remote.
+
+dvc push
+→ Uploads DVC-tracked data/models from the local cache to remote storage such as S3.
+
+dvc pull
+→ Downloads DVC-tracked data/models from remote storage to the local workspace.
+
+dvc fetch
+→ Downloads DVC-tracked data/models from remote storage into the local DVC cache without updating the workspace.
+
+dvc checkout
+→ Restores DVC-tracked files according to the current Git commit/version.
+
+dvc stage add
+→ Creates a stage in the DVC pipeline and defines its dependencies, outputs, and command.
+
+dvc repro
+→ Reproduces/runs the DVC pipeline stages whose dependencies have changed.
+
+dvc dag
+→ Displays the dependency graph of the DVC pipeline.
+
+dvc metrics show
+→ Displays the ML metrics tracked by DVC.
+
+dvc metrics diff
+→ Compares ML metrics between different Git/DVC versions.
+
+dvc params show
+→ Displays the parameters tracked by DVC.
+
+dvc params diff
+→ Compares parameters between different versions.
+
+dvc exp run
+→ Runs an ML experiment using the DVC pipeline.
+
+dvc exp show
+→ Displays and compares DVC experiments.
+
+dvc exp diff
+→ Shows the differences between experiments.
+
+dvc import <repo-url> <path>
+→ Imports data/model files from another DVC repository and tracks them as a dependency.
+
+dvc update <file.dvc>
+→ Updates an imported DVC dependency to a newer version.
+
+dvc get <repo-url> <path>
+→ Downloads a file/directory from a DVC repository without adding it to the current DVC project.
+
+dvc gc
+→ Removes unused data from the DVC cache or remote storage.
+
+dvc doctor
+→ Displays DVC environment and system information useful for troubleshooting.
+
+dvc version
+→ Displays the installed DVC version.
+
+
+
+
+* How do you restore an older dataset version? 
+
+  To restore an older dataset version, I would first checkout the Git commit associated with that dataset
+  version and then run dvc checkout. DVC reads the .dvc file and restores the corresponding dataset; 
+  if the data is not available locally, I can run dvc pull to download it from the remote storage.
+
+* What is the difference between dvc push, dvc pull, and dvc fetch?
+
+  * dvc push uploads DVC-tracked data from the local cache to remote storage like S3
+
+  * dvc pull downloads the required data from remote storage to the local cache and workspace
+
+  * dvc fetch downloads the data only to the local DVC cache without updating the workspace
+    i.e it does NOT update the actual files in your workspace
+
+    .dvc/cache directory contains the cache
+
+
