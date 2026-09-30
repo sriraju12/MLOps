@@ -401,3 +401,110 @@ Principle Component Analysis(PCA) - Principal Component Analysis (PCA) is a powe
 
 
 
+Machine Learning (ML) lifecycle - The Machine Learning (ML) lifecycle is the end-to-end process of 
+                                  building, deploying, and maintaining an ML system.
+
+
+  Lifecycle of ML:
+
+    1. Problem Definition → 2. Data Collection → 3. Data Preparation → 4. Model Training → 5. Model Evaluation → 6. Deployment → 7. Monitoring → 8. Retraining
+
+    1. Problem Definition — Identify the problem, expected output, constraints, and success metrics. For 
+       example, predict whether a customer will churn.
+    
+    2. Data Collection — Gather relevant data from databases, APIs, sensors, logs, surveys, files, and 
+       other sources.
+   
+    3. Data Preparation — Clean missing/incorrect values, remove duplicates, encode categorical 
+       variables, normalize data, perform feature engineering, and split the dataset into training, validation, and test sets.
+    
+    4. Model Training — Select suitable algorithms and train candidate models using the training data. 
+       Hyperparameters may also be tuned at this stage.
+    
+    5. Model Evaluation — Evaluate the model on unseen data using appropriate metrics, such as accuracy, 
+       precision, recall, F1-score, ROC-AUC, MAE, RMSE, depending on the problem.
+    
+    6. Deployment — Put the selected model into production—for example, behind an API, inside an 
+       application, or as part of a batch-processing pipeline.
+    
+    7. Monitoring — Track production performance, latency, errors, data quality, data drift, and model 
+       drift. A model that worked well initially can become less accurate as real-world data changes.
+    
+    8. Retraining and Maintenance — Collect newer data, retrain and reevaluate the model, then deploy an 
+       updated version when appropriate. This makes the ML lifecycle continuous rather than a one-time process. 
+
+
+The Role of Data scientist - from problem Definition to model evaluation they 
+                             do.
+
+                                 This is how MLOps Engineers help Data scientist by setting up CICD for them.
+
+CICD:
+
+name: CI - Train and Save the model
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  matrix-pip:
+    name: Train and Save the model
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.11, 3.12]
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup python 
+        uses: actions/setup-python@v4
+        with:
+           python-version: ${{ matrix.python }}
+      
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip setuptools wheel
+
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Train the model
+        run: |
+           python train.py
+           ls -la artifacts
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ml-artifacts-${{ matrix.python }}-${{ github.run_id }}
+          path: artifacts
+
+
+
+Role of ML Engineers -  they update the code to make it as production ready and also they develop API's 
+                        for it. so that it can be integerated. so that end-users can use this model and also Optimize the 
+                        
+                        This is how MLOps Engineers help ML Engineers:
+
+                        MLOps Engineers focus on the infrastructure and automation side, allowing ML Engineers to concentrate on model logic and APIs. They containerize ML applications using Docker, standardize runtimes, and deploy them on VMs or Kubernetes with proper networking, configuration, and load balancing.
+
+                        They also make ML services production-ready by implementing health checks, logging, monitoring, scaling, and safe rollout/rollback mechanisms. Overall, MLOps Engineers take what ML Engineers build and turn it into a scalable, reliable, and production-grade service that real users can depend on.
+                    
+                       
+
+Role of Operations -  they do Deployment and Monitoring.
+
+
+Role of MLOps - Build CI/CD pipelines for ML applications and models. Provision infrastructure using 
+                tools such as Terraform. Deploy models to platforms such as Kubernetes/EKS. Manage model and application releases. Implement monitoring and alerting. Monitor infrastructure, application, and model-related metrics. Help implement model/data drift monitoring. Automate model retraining and redeployment when required. Maintain the reliability, scalability, and security of the ML platform.
+
+
+
+
+
+
+
